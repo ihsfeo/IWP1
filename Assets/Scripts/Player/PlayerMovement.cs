@@ -88,7 +88,7 @@ public class PlayerMovement : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Space) && JumpCount < JumpCountMax)
             {
-                Up = 0.035f;
+                Up = 0.045f;
                 JumpCount++;
             }
         }
