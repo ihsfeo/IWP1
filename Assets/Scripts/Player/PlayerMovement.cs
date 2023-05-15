@@ -33,6 +33,12 @@ public class PlayerMovement : MonoBehaviour
 
     float Up;
     float Right;
+    float FallSpeed = 1;
+
+    float MovementSpeed = 1;
+
+    bool InWater = false;
+    float OxygenLevel = 10;
 
     List<GameObject> CollisionObjects = new List<GameObject>();
 
@@ -69,6 +75,7 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        FallSpeed = 1;
         if (transform.position.y < -30) // Test
             transform.position = new Vector3(2, -1, 0);
 
@@ -77,13 +84,24 @@ public class PlayerMovement : MonoBehaviour
         PlatformPhasing = false;
 
         // Jump
-        if (Input.GetKeyDown(KeyCode.Space) && JumpCount < JumpCountMax)
+        if (!InWater)
         {
-            Up = 0.035f;
-            JumpCount++;
+            if (Input.GetKeyDown(KeyCode.Space) && JumpCount < JumpCountMax)
+            {
+                Up = 0.035f;
+                JumpCount++;
+            }
+        }
+        else
+        {
+            if (Input.GetKey(KeyCode.Space))
+            {
+                Up += 0.0005f;
+            }
+            FallSpeed *= 0.25f;
         }
         // Going Down Platforms
-        else if (Input.GetKeyDown(KeyCode.S) && OnPlatform) // && Currently on a platform
+        if (Input.GetKeyDown(KeyCode.S) && OnPlatform) // && Currently on a platform
         {
             PlatformPhasing = true;
         }
@@ -91,10 +109,13 @@ public class PlayerMovement : MonoBehaviour
         OnPlatform = false;
 
         // Gravity
-        Up -= Time.deltaTime / 8;
-        if (Up < -TerminalVelocity / 2)
-            Up = -TerminalVelocity / 2;
+        Up -= Time.deltaTime / 8 * FallSpeed;
+        if (Up < -TerminalVelocity / 2 * FallSpeed)
+            Up = -TerminalVelocity / 2 * FallSpeed;
+        else if (Up > TerminalVelocity / 2 * FallSpeed)
+            Up = TerminalVelocity / 2 * FallSpeed;
         transform.position += new Vector3(0, Up, 0);
+
         // Vertical Collisions
         {
             for (int i = 0; i < CollisionObjects.Count; i++)
@@ -148,6 +169,8 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
         }
+
+        oldPosition = transform.position;
 
         // Horizontal Movement
         if (Input.GetKey(KeyCode.A))
@@ -227,8 +250,30 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        transform.position += new Vector3(Right, 0, 0);
-        Right /= 1.08f;
+        if (!InWater)
+        {
+            transform.position += new Vector3(Right, 0, 0);
+            Right /= 1.08f;
+            if (OxygenLevel < 10)
+            {
+                OxygenLevel += Time.deltaTime * 2;
+                if (OxygenLevel > 10)
+                    OxygenLevel = 10;
+            }
+        }
+        else
+        {
+            transform.position += new Vector3(Right * 0.7f, 0, 0);
+            Right /= 1.04f + Mathf.Abs(Right * 2);
+            if (OxygenLevel > 0)
+            {
+                OxygenLevel -= Time.deltaTime;
+                if (OxygenLevel < 0)
+                    OxygenLevel = 0;
+            }
+        }
+
+        InWater = false;
 
         // Horizonal Collisions
         {
@@ -262,6 +307,15 @@ public class PlayerMovement : MonoBehaviour
                         }
                         break;
                     case "Platform":
+                        break;
+                    case "Water":
+                         if (transform.position.x - transform.localScale.x / 2 < obj.transform.position.x + obj.transform.localScale.x / 2 &&
+                            transform.position.x + transform.localScale.x / 2 > obj.transform.position.x - obj.transform.localScale.x / 2 &&
+                            transform.position.y - transform.localScale.y / 2 < obj.transform.position.y + obj.transform.localScale.y / 2 &&
+                            transform.position.y + transform.localScale.y / 2 > obj.transform.position.y - obj.transform.localScale.y / 2)
+                        {
+                            InWater = true;
+                        }
                         break;
                 }
             }
