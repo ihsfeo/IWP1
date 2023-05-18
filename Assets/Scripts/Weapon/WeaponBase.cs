@@ -47,16 +47,16 @@ public class WeaponBase : MonoBehaviour
         Total
     }
 
-    TypeOfDamage eTypeOfDamage;
-    int BaseDamage;
+    protected TypeOfDamage eTypeOfDamage;
+    protected int BaseDamage;
 
-    int Proficiency;
-    int ProficiencyOwned;
-    int ProficiencyExp;
-    int ProficiencyRequired;
+    protected int Proficiency;
+    protected int ProficiencyOwned;
+    protected int ProficiencyExp;
+    protected int ProficiencyRequired;
     // Tree
 
-    enum WeaponType
+    public enum WeaponType
     {
         Swords = 0,
         Bow,
@@ -64,9 +64,9 @@ public class WeaponBase : MonoBehaviour
         TotalTypes
     }
 
-    WeaponType eWeaponType;
+    protected WeaponType eWeaponType;
 
-    int Level;
+    protected int Level;
 
     // BonusStats
 

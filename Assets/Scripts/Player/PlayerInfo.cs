@@ -50,7 +50,8 @@ public class PlayerInfo : MonoBehaviour
         // Status Ailment Update
         for (int i = 0; i < StatusAilmentsList.Count; i++)
         {
-            StatusAilmentsList[i].UpdateAilment();
+            if (!StatusAilmentsList[i].UpdateAilment())
+                StatusAilmentsList.Remove(StatusAilmentsList[i]); // Remove
         }
     }
 }

@@ -30,6 +30,7 @@ public class PlayerMovement : MonoBehaviour
     bool CanDash;
     float DashInterval;
     float DashCD;
+    float DashImmunity;
 
     float Up;
     float Right;
@@ -63,6 +64,7 @@ public class PlayerMovement : MonoBehaviour
         DashDirection = Direction.Left;
         DashCD = 0;
         DashInterval = 0;
+        DashImmunity = 0;
         CanDash = true;
     }
 
@@ -79,6 +81,11 @@ public class PlayerMovement : MonoBehaviour
         if (transform.position.y < -30) // Test
             transform.position = new Vector3(2, -1, 0);
 
+        if (FacingDirection == Direction.Left)
+            transform.LookAt(transform.position + new Vector3(0, 0, -1));
+        else if (FacingDirection == Direction.Right)
+            transform.LookAt(transform.position + new Vector3(0, 0, 1));
+
         // Original Position
         Vector3 oldPosition = transform.position;
         PlatformPhasing = false;
@@ -91,6 +98,13 @@ public class PlayerMovement : MonoBehaviour
                 Up = 0.045f;
                 JumpCount++;
             }
+
+            if (OxygenLevel < 10)
+            {
+                OxygenLevel += Time.deltaTime * 2;
+                if (OxygenLevel > 10)
+                    OxygenLevel = 10;
+            }
         }
         else
         {
@@ -99,6 +113,13 @@ public class PlayerMovement : MonoBehaviour
                 Up += 0.0005f;
             }
             FallSpeed *= 0.25f;
+
+            if (OxygenLevel > 0)
+            {
+                OxygenLevel -= Time.deltaTime;
+                if (OxygenLevel < 0)
+                    OxygenLevel = 0;
+            }
         }
         // Going Down Platforms
         if (Input.GetKeyDown(KeyCode.S) && OnPlatform) // && Currently on a platform
@@ -204,9 +225,10 @@ public class PlayerMovement : MonoBehaviour
                             // Checking if same Direction
                             if (DashDirection == Direction.Left) // Successful Dash
                             {
-                                Right = -0.25f;
-                                DashCD = 0.2f;
+                                Right = -0.3f;
+                                DashCD = 0.4f;
                                 DashInterval = 0;
+                                DashImmunity = 0.1f;
                             }
                             else
                             {
@@ -230,9 +252,10 @@ public class PlayerMovement : MonoBehaviour
                             // Checking if same Direction
                             if (DashDirection == Direction.Right) // Successful Dash
                             {
-                                Right = 0.25f;
-                                DashCD = 0.2f;
+                                Right = 0.3f;
+                                DashCD = 0.4f;
                                 DashInterval = 0;
+                                DashImmunity = 0.1f;
                             }
                             else
                             {
@@ -250,27 +273,28 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        if (!InWater)
+        // Horizontal Movement Update
+        if (DashImmunity > 0)
+        {
+            DashImmunity -= Time.deltaTime;
+            if (InWater)
+                transform.position += new Vector3(Right * 0.7f, 0, 0);
+            else
+                transform.position += new Vector3(Right, 0, 0);
+            Right /= 1.04f;
+        }
+        else if (!InWater)
         {
             transform.position += new Vector3(Right, 0, 0);
             Right /= 1.08f;
-            if (OxygenLevel < 10)
-            {
-                OxygenLevel += Time.deltaTime * 2;
-                if (OxygenLevel > 10)
-                    OxygenLevel = 10;
-            }
         }
         else
         {
             transform.position += new Vector3(Right * 0.7f, 0, 0);
-            Right /= 1.04f + Mathf.Abs(Right * 2);
-            if (OxygenLevel > 0)
-            {
-                OxygenLevel -= Time.deltaTime;
-                if (OxygenLevel < 0)
-                    OxygenLevel = 0;
-            }
+            if (Mathf.Abs(Right) <= 0.055f)
+                Right /= 1.04f + Mathf.Abs(Right * 1.2f * 1.3f);
+            else
+                Right /= 1f + Mathf.Abs(Right * 0.69f * 1.3f);
         }
 
         InWater = false;
