@@ -4,17 +4,17 @@ using UnityEngine;
 
 public class EnemyBase : MonoBehaviour
 {
-    int Shield;
-    int ShieldMax;
+    protected int Shield;
+    protected int ShieldMax;
 
-    int Health;
-    int HealthMax;
+    protected int Health;
+    protected int HealthMax;
 
-    int BaseDamage;
+    protected int BaseDamage;
 
-    List<StatusAilment> StatusAilmentsList;
-    WeaponBase.TypeOfDamage ShieldType;
-    List<WeaponBase.TypeOfDamage> ShieldWeakness;
+    protected List<StatusAilment> StatusAilmentsList;
+    protected WeaponBase.TypeOfDamage ShieldType;
+    protected List<WeaponBase.TypeOfDamage> ShieldWeakness;
 
     public enum EnemyType
     {
@@ -29,15 +29,17 @@ public class EnemyBase : MonoBehaviour
         Normal = 0,
         Flying,
         Worm,
+        Special,
         Total
     }
 
     public enum EnemyVariation
     {
+        Basic,
         Total
     }
 
-    EnemyType eEnemyType;
-    EnemyMovementType eEnemyMovementType;
-    EnemyVariation eEnemyVariation;
+    protected EnemyType eEnemyType;
+    protected EnemyMovementType eEnemyMovementType;
+    protected EnemyVariation eEnemyVariation;
 }

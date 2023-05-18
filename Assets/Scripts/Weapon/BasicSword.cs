@@ -4,6 +4,23 @@ using UnityEngine;
 
 public class BasicSword : WeaponBase
 {
+    [SerializeField]
+    PlayerInfo playerInfo;
+
+    List<GameObject> CollisionObjects = new List<GameObject>();
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag != "Untagged")
+            CollisionObjects.Add(collision.gameObject);
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag != "Untagged")
+            CollisionObjects.Remove(collision.gameObject);
+    }
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -22,6 +39,20 @@ public class BasicSword : WeaponBase
     // Update is called once per frame
     void Update()
     {
-        
+        if (playerInfo.SwingingSword) // Attacking
+        {
+            for (int i = 0; i < CollisionObjects.Count; i++)
+            {
+                GameObject obj = CollisionObjects[i];
+                switch (obj.tag)
+                {
+                    case "Destructible": // Destroy Destructible Objects
+                        obj.GetComponent<Destructible>().Hit();
+                        break;
+                    case "Enemy":
+                        break;
+                }
+            }
+        }
     }
 }

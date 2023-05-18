@@ -127,8 +127,10 @@ public class PlayerMovement : MonoBehaviour
             if (OxygenLevel < 0)
                 OxygenLevel = 0;
         }
-
-        Debug.Log("Oxygen: " + OxygenLevel);
+        else if (OxygenLevel <= 0)
+        {
+            // Lose Health
+        }
 
         // Going Down Platforms
         if (Input.GetKeyDown(KeyCode.S) && OnPlatform) // && Currently on a platform
@@ -153,6 +155,7 @@ public class PlayerMovement : MonoBehaviour
                 GameObject obj = CollisionObjects[i];
                 switch (obj.tag)
                 {
+                    case "Destructible":
                     case "Solid":
                         // Check if raycast into top/bottom lines
 
@@ -316,6 +319,7 @@ public class PlayerMovement : MonoBehaviour
                 GameObject obj = CollisionObjects[i];
                 switch (obj.tag)
                 {
+                    case "Destructible":
                     case "Solid":
                         if (transform.position.y >= obj.transform.position.y + obj.transform.localScale.y / 2 + 0.5f || transform.position.y <= obj.transform.position.y - obj.transform.localScale.y / 2 - 0.5f)
                             continue;
