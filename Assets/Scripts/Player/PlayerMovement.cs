@@ -15,6 +15,9 @@ public class PlayerMovement : MonoBehaviour
         Right
     }
 
+    [SerializeField]
+    PlayerInfo playerInfo;
+
     Direction FacingDirection;
     Direction DashDirection;
 
@@ -40,6 +43,7 @@ public class PlayerMovement : MonoBehaviour
 
     bool InWater = false;
     float OxygenLevel = 10;
+    bool CantBreathe = false;
 
     List<GameObject> CollisionObjects = new List<GameObject>();
 
@@ -81,10 +85,13 @@ public class PlayerMovement : MonoBehaviour
         if (transform.position.y < -30) // Test
             transform.position = new Vector3(2, -1, 0);
 
-        if (FacingDirection == Direction.Left)
-            transform.LookAt(transform.position + new Vector3(0, 0, -1));
-        else if (FacingDirection == Direction.Right)
-            transform.LookAt(transform.position + new Vector3(0, 0, 1));
+        if (!playerInfo.SwingingSword)
+        {
+            if (FacingDirection == Direction.Left)
+                transform.LookAt(transform.position + new Vector3(0, 0, -1));
+            else if (FacingDirection == Direction.Right)
+                transform.LookAt(transform.position + new Vector3(0, 0, 1));
+        }
 
         // Original Position
         Vector3 oldPosition = transform.position;
@@ -98,13 +105,6 @@ public class PlayerMovement : MonoBehaviour
                 Up = 0.045f;
                 JumpCount++;
             }
-
-            if (OxygenLevel < 10)
-            {
-                OxygenLevel += Time.deltaTime * 2;
-                if (OxygenLevel > 10)
-                    OxygenLevel = 10;
-            }
         }
         else
         {
@@ -113,14 +113,23 @@ public class PlayerMovement : MonoBehaviour
                 Up += 0.0005f;
             }
             FallSpeed *= 0.25f;
-
-            if (OxygenLevel > 0)
-            {
-                OxygenLevel -= Time.deltaTime;
-                if (OxygenLevel < 0)
-                    OxygenLevel = 0;
-            }
         }
+
+        if (OxygenLevel < 10 && !CantBreathe)
+        {
+            OxygenLevel += Time.deltaTime * 2;
+            if (OxygenLevel > 10)
+                OxygenLevel = 10;
+        }
+        else if (OxygenLevel > 0 && CantBreathe)
+        {
+            OxygenLevel -= Time.deltaTime;
+            if (OxygenLevel < 0)
+                OxygenLevel = 0;
+        }
+
+        Debug.Log("Oxygen: " + OxygenLevel);
+
         // Going Down Platforms
         if (Input.GetKeyDown(KeyCode.S) && OnPlatform) // && Currently on a platform
         {
@@ -298,6 +307,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         InWater = false;
+        CantBreathe = false;
 
         // Horizonal Collisions
         {
@@ -336,9 +346,17 @@ public class PlayerMovement : MonoBehaviour
                          if (transform.position.x - transform.localScale.x / 2 < obj.transform.position.x + obj.transform.localScale.x / 2 &&
                             transform.position.x + transform.localScale.x / 2 > obj.transform.position.x - obj.transform.localScale.x / 2 &&
                             transform.position.y - transform.localScale.y / 2 < obj.transform.position.y + obj.transform.localScale.y / 2 &&
-                            transform.position.y + transform.localScale.y / 2 > obj.transform.position.y - obj.transform.localScale.y / 2)
+                            transform.position.y > obj.transform.position.y - obj.transform.localScale.y / 2 &&
+                            obj.transform.localScale.y > 0.5)
                         {
                             InWater = true;
+                            if (transform.position.y + transform.localScale.y / 4 > obj.transform.position.y - obj.transform.localScale.y / 2 &&
+                                transform.position.y + transform.localScale.y / 4 < obj.transform.position.y + obj.transform.localScale.y / 2 &&
+                                transform.position.x < obj.transform.position.x + obj.transform.localScale.x / 2 &&
+                                transform.position.x > obj.transform.position.x - obj.transform.localScale.x / 2)
+                            {
+                                CantBreathe = true;
+                            }
                         }
                         break;
                 }

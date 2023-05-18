@@ -14,7 +14,17 @@ public class PlayerInfo : MonoBehaviour
     List<int> Resistances = new List<int>();
     List<int> Defences = new List<int>();
 
+    public bool SwingingSword = false;
+    int CurrentSwordSwing;
+
     int CurrentWeapon;
+
+    public void SwingSword (int SwordCount, bool StartEnd)
+    {
+        SwingingSword = StartEnd;
+        if (SwingingSword)
+            CurrentSwordSwing = SwordCount;
+    }
 
     private void Awake()
     {
