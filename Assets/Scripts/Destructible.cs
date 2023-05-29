@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Destructible : MonoBehaviour
 {
-    bool Broken = false;
+    public bool Broken = false;
 
     public void Hit()
     {
@@ -15,17 +15,5 @@ public class Destructible : MonoBehaviour
             // Drop things
             // Break animation
         }
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

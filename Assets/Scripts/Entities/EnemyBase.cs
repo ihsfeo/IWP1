@@ -12,9 +12,9 @@ public class EnemyBase : MonoBehaviour
 
     protected int BaseDamage;
 
-    protected List<StatusAilment> StatusAilmentsList;
+    protected List<StatusAilment> StatusAilmentsList = new List<StatusAilment>();
     protected WeaponBase.TypeOfDamage ShieldType;
-    protected List<WeaponBase.TypeOfDamage> ShieldWeakness;
+    protected List<WeaponBase.TypeOfDamage> ShieldWeakness = new List<WeaponBase.TypeOfDamage>();
 
     public enum EnemyType
     {

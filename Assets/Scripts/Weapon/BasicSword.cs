@@ -11,13 +11,19 @@ public class BasicSword : WeaponBase
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag != "Untagged")
+        if (collision.gameObject.tag != "Untagged" &&
+            collision.gameObject.tag != "Solid" &&
+            collision.gameObject.tag != "Water" &&
+            collision.gameObject.tag != "Platform")
             CollisionObjects.Add(collision.gameObject);
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.gameObject.tag != "Untagged")
+        if (collision.gameObject.tag != "Untagged" &&
+            collision.gameObject.tag != "Solid" &&
+            collision.gameObject.tag != "Water" &&
+            collision.gameObject.tag != "Platform")
             CollisionObjects.Remove(collision.gameObject);
     }
 
@@ -50,6 +56,12 @@ public class BasicSword : WeaponBase
                         obj.GetComponent<Destructible>().Hit();
                         break;
                     case "Enemy":
+                        // Check if This Attack Already Hit this Enemy
+                        if (HitEntity(obj))
+                        {
+                            // Damage Calculation
+                            // Enemy TakeDamage( Weapon GetDamage + Player Equipments/Stats )
+                        }
                         break;
                 }
             }

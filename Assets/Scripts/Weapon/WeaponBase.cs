@@ -70,6 +70,8 @@ public class WeaponBase : MonoBehaviour
 
     // BonusStats
 
+    protected List<GameObject> HitList = new List<GameObject>();
+
     public int GetDamage()
     {
         int returnDamage;
@@ -77,5 +79,20 @@ public class WeaponBase : MonoBehaviour
         returnDamage = BaseDamage;
 
         return returnDamage;
+    }
+
+    public void ResetHits()
+    {
+        HitList.Clear();
+    }
+
+    protected bool HitEntity(GameObject target)
+    {
+        if (!HitList.Contains(target))
+        {
+            HitList.Add(target);
+            return true;
+        }
+        return false;
     }
 }

@@ -63,7 +63,7 @@ public class PlayerMovement : MonoBehaviour
     {
         JumpCountMax = 3;
         JumpCount = 0;
-        TerminalVelocity = 0.15f;
+        TerminalVelocity = 4;
 
         DashDirection = Direction.Left;
         DashCD = 0;
@@ -102,7 +102,7 @@ public class PlayerMovement : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Space) && JumpCount < JumpCountMax)
             {
-                Up = 0.045f;
+                Up = 12 * Time.deltaTime;
                 JumpCount++;
             }
         }
@@ -110,9 +110,9 @@ public class PlayerMovement : MonoBehaviour
         {
             if (Input.GetKey(KeyCode.Space))
             {
-                Up += 0.0005f;
+                Up += 0.2f * Time.deltaTime;
             }
-            FallSpeed *= 0.25f;
+            FallSpeed *= 0.06f;
         }
 
         if (OxygenLevel < 10 && !CantBreathe)
@@ -141,7 +141,7 @@ public class PlayerMovement : MonoBehaviour
         OnPlatform = false;
 
         // Gravity
-        Up -= Time.deltaTime / 8 * FallSpeed;
+        Up -= Time.deltaTime / 2 * FallSpeed;
         if (Up < -TerminalVelocity / 2 * FallSpeed)
             Up = -TerminalVelocity / 2 * FallSpeed;
         else if (Up > TerminalVelocity / 2 * FallSpeed)
@@ -210,13 +210,13 @@ public class PlayerMovement : MonoBehaviour
         {
             if (!Input.GetKey(KeyCode.D))
             {
-                Right -= 0.002f;
+                Right -= 0.5f * Time.deltaTime;
                 FacingDirection = Direction.Left;
             }
         }
         else if (Input.GetKey(KeyCode.D))
         {
-            Right += 0.002f;
+            Right += 0.5f * Time.deltaTime;
             FacingDirection = Direction.Right;
         }
 
@@ -237,7 +237,7 @@ public class PlayerMovement : MonoBehaviour
                             // Checking if same Direction
                             if (DashDirection == Direction.Left) // Successful Dash
                             {
-                                Right = -0.3f;
+                                Right = -35f * Time.deltaTime;
                                 DashCD = 0.4f;
                                 DashInterval = 0;
                                 DashImmunity = 0.1f;
@@ -250,7 +250,7 @@ public class PlayerMovement : MonoBehaviour
                         }
                         else // First Tap in the direction
                         {
-                            DashInterval = 0.2f;
+                            DashInterval = 35f * Time.deltaTime;
                             DashDirection = Direction.Left;
                         }
                     }
@@ -264,7 +264,7 @@ public class PlayerMovement : MonoBehaviour
                             // Checking if same Direction
                             if (DashDirection == Direction.Right) // Successful Dash
                             {
-                                Right = 0.3f;
+                                Right = 35f * Time.deltaTime;
                                 DashCD = 0.4f;
                                 DashInterval = 0;
                                 DashImmunity = 0.1f;
@@ -293,20 +293,20 @@ public class PlayerMovement : MonoBehaviour
                 transform.position += new Vector3(Right * 0.7f, 0, 0);
             else
                 transform.position += new Vector3(Right, 0, 0);
-            Right /= 1.04f;
+            Right /= 1 + 6f * Time.deltaTime;
         }
         else if (!InWater)
         {
             transform.position += new Vector3(Right, 0, 0);
-            Right /= 1.08f;
+            Right /= 1 + 8 * Time.deltaTime;
         }
         else
         {
             transform.position += new Vector3(Right * 0.7f, 0, 0);
             if (Mathf.Abs(Right) <= 0.055f)
-                Right /= 1.04f + Mathf.Abs(Right * 1.2f * 1.3f);
+                Right /= 1.04f + Mathf.Abs(Right * 1.2f * 1.3f) * 30 * Time.deltaTime;
             else
-                Right /= 1f + Mathf.Abs(Right * 0.69f * 1.3f);
+                Right /= 1f + Mathf.Abs(Right * 0.69f * 1.3f) * 30 * Time.deltaTime;
         }
 
         InWater = false;
@@ -379,6 +379,17 @@ public class PlayerMovement : MonoBehaviour
             else
             {
                 cPosition = cPosition + (-cPosition + transform.position) / 80;
+            }
+
+            // Clamp
+            if (cPosition.y - transform.position.y > 6)
+            {
+                cPosition += new Vector3(0, 6 + transform.position.y - cPosition.y, 0);
+            }
+            else if (cPosition.y - transform.position.y < -6)
+            {
+                cPosition += new Vector3(0, -6 + transform.position.y - cPosition.y, 0);
+                
             }
             cPosition.z = -3;
 

@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class StatusAilment : MonoBehaviour
 {
-    WeaponBase.TypeOfDamage TypeOfAilment;
-    int Level;
-    float Adv;
-    float AdvNeeded;
+    public WeaponBase.TypeOfDamage TypeOfAilment;
+    public int Level;
+    public float Adv;
+    public float AdvNeeded;
     float TimeFromHit;
 
     float GetAdvNeeded(int level)
