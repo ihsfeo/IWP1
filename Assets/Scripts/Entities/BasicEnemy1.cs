@@ -4,6 +4,14 @@ using UnityEngine;
 
 public class BasicEnemy1 : EnemyBase
 {
+    enum EnemyState
+    {
+        Idle,
+        Attacking,
+        Dead,
+        Chase
+    }
+
     // N NE E SE S SW W NW 
     List<float> SteeringDesire = new List<float>();
 
@@ -11,7 +19,7 @@ public class BasicEnemy1 : EnemyBase
 
     float Up;
     float Right;
-    float TerminalVelocity = 0.15f;
+    float TerminalVelocity = 4f;
     float FallSpeed = 1;
 
     int JumpCount = 0;
@@ -32,22 +40,87 @@ public class BasicEnemy1 : EnemyBase
 
     void Jump()
     {
-        if (JumpCount < 1)
+        if (!InWater)
         {
-            Up = 0.1f;
-            JumpCount++;
+            if (JumpCount == 0)
+            {
+                Up = 12f * Time.deltaTime;
+                JumpCount++;
+            }
+        }
+        else
+        {
+            Up += 1 * Time.deltaTime;
         }
     }
 
-    void dotIntent(Vector3 direction, bool positive)
+    void GoRight()
+    {
+        Right = 1f * Time.deltaTime;
+    }
+
+    void GoLeft()
+    {
+        Right = -1f * Time.deltaTime;
+    }
+
+    void dotIntent(Vector3 direction, float magnitude = 1)
     {
         for (int i = 0; i < 8; i++)
         {
-            if (positive)
-                SteeringDesire[i] += Vector3.Dot(Quaternion.AngleAxis(45 * i, Vector3.back) * Vector3.up, direction.normalized);
-            else
-                SteeringDesire[i] -= Vector3.Dot(Quaternion.AngleAxis(45 * i, Vector3.back) * Vector3.up, direction.normalized);
+            SteeringDesire[i] += Vector3.Dot(Quaternion.AngleAxis(45 * i, Vector3.back) * Vector3.up, direction.normalized) * magnitude;
         }
+    }
+
+    void dotIntent(Vector3 direction, float distance, float maxDistance)
+    {
+        for (int i = 0; i < 8; i++)
+        {
+            float value = Vector3.Dot(Quaternion.AngleAxis(45 * i, Vector3.back) * Vector3.up, direction.normalized) / maxDistance * (maxDistance - distance);
+            if (value < 0)
+                value = 0;
+
+            SteeringDesire[i] -= value;
+        }
+    }
+
+    void dotDangers()
+    {
+        // check 8 directions for obstacles
+        for (int i = 0; i < 8; i++)
+        {
+            gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+
+            RaycastHit2D hit2D;
+            LayerMask layerMask;
+            layerMask = 1 << 2;
+            hit2D = Physics2D.Raycast(transform.position, Quaternion.AngleAxis(45 * i, Vector3.back) * Vector3.up, layerMask);
+
+            gameObject.layer = LayerMask.NameToLayer("Default");
+
+            if (hit2D.collider == null)
+            {
+                Debug.DrawLine(transform.position, transform.position + Quaternion.AngleAxis(45 * i, Vector3.back) * Vector3.up * 5, Color.green);
+                continue;
+            }
+
+            if (hit2D.distance <= 5 && hit2D.collider.gameObject.tag != "Player")
+            {
+                dotIntent(Quaternion.AngleAxis(45 * i, Vector3.back) * Vector3.up, hit2D.distance, 5);
+                Debug.DrawLine(transform.position, hit2D.point, Color.red);
+            }
+        }
+    }
+
+    int GetMostIntent()
+    {
+        int most = 0;
+        for (int i = 0; i < 8; i++)
+        {
+            if (SteeringDesire[i] > SteeringDesire[most])
+                most = i;
+        }
+        return most;
     }
 
     bool SeePlayer()
@@ -67,7 +140,7 @@ public class BasicEnemy1 : EnemyBase
                     return false;
                 if (hit2D.collider.gameObject.tag == "Player")
                 {
-                    dotIntent(CollisionObjects[i].transform.position - transform.position, true);
+                    dotIntent(CollisionObjects[i].transform.position - transform.position, 5);
                     return true;
                 }
                 else
@@ -83,6 +156,11 @@ public class BasicEnemy1 : EnemyBase
         {
             SteeringDesire[i] = 0;
         }
+    }
+
+    void PrintDot()
+    {
+        Debug.Log("Dot: " + SteeringDesire[0] + ", " + SteeringDesire[1] + ", " + SteeringDesire[2] + ", " + SteeringDesire[3] + ", " + SteeringDesire[4] + ", " + SteeringDesire[5] + ", " + SteeringDesire[6] + ", " + SteeringDesire[7]);
     }
 
     private void Awake()
@@ -114,23 +192,71 @@ public class BasicEnemy1 : EnemyBase
     {
         Vector3 oldPosition = transform.position;
 
-        Up -= Time.deltaTime / 8 * FallSpeed;
+        if (SeePlayer())
+        {
+            // Debug.Log("Sheesh");
+        }
+
+        dotDangers();
+
+        // Decisions
+        {
+            /*
+             Move Left
+            Move Right
+            Jump
+            Attacks
+             */
+
+            int MostIntent = GetMostIntent();
+            if (SteeringDesire[MostIntent] > 0)
+            {
+                switch (MostIntent)
+                {
+                    case 0: // Up
+                        Jump();
+                        break;
+                    case 1: // Up Right
+                        Jump();
+                        GoRight();
+                        break;
+                    case 2: // Right
+                        GoRight();
+                        break;
+                    case 3: // Down Right
+                        GoRight();
+                        break;
+                    case 4: // Down
+                        break;
+                    case 5: // Down Left
+                        GoLeft();
+                        break;
+                    case 6: // Left
+                        GoLeft();
+                        break;
+                    case 7: // Up Left
+                        Jump();
+                        GoLeft();
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else
+            {
+                // Idle
+
+            }
+        }
+
+        Up -= Time.deltaTime / 2 * FallSpeed;
         if (Up < -TerminalVelocity / 2 * FallSpeed)
             Up = -TerminalVelocity / 2 * FallSpeed;
         else if (Up > TerminalVelocity / 2 * FallSpeed)
             Up = TerminalVelocity / 2 * FallSpeed;
         transform.position += new Vector3(0, Up, 0);
 
-        if (SeePlayer())
-        {
-            // Debug.Log("Sheesh");
-        }
-
-        for (int i = 0; i < CollisionObjects.Count; i++)
-        {
-
-        }
-
+        // Vertical Collisions
         for (int i = 0; i < CollisionObjects.Count; i++)
         {
             GameObject obj = CollisionObjects[i];
@@ -247,6 +373,7 @@ public class BasicEnemy1 : EnemyBase
                 StatusAilmentsList.Remove(StatusAilmentsList[i]); // Remove
         }
 
+        PrintDot();
         // Reset Intent
         dotClear();
     }
