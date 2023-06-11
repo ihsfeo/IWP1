@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4011502626418845230}
   - component: {fileID: 4011502626418845229}
   - component: {fileID: 4011502626418845228}
+  - component: {fileID: 1697322512960998881}
   - component: {fileID: 4011502626418845225}
   - component: {fileID: 4011502626418845224}
   m_Layer: 0
@@ -34,7 +35,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4011502626811388471}
-  - {fileID: 5939615380436439724}
+  - {fileID: 773050724193418867}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -63,6 +64,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce43a36a6e9a53c4cab2b682897d5eac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  healthBar: {fileID: 0}
+  statusAilmentManager: {fileID: 0}
+  craftingManager: {fileID: 0}
+  inventoryManager: {fileID: 0}
+  playerMovement: {fileID: 0}
+  status: {fileID: 0}
+  CurrentSceneState: 0
   SwingingSword: 0
 --- !u!114 &4011502626418845228
 MonoBehaviour:
@@ -77,7 +85,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   camera: {fileID: 0}
+  status: {fileID: 0}
   playerInfo: {fileID: 0}
+--- !u!114 &1697322512960998881
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4011502626418845219}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6beb206c71e81c4f993e69d71b7cc13, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InWater: 0
+  MovementSpeed: 1
+  HealthMax: 0
+  Health: 0
+  IsFrozen: 0
+  KnockbackResistance: 0
 --- !u!50 &4011502626418845225
 Rigidbody2D:
   serializedVersion: 4
@@ -209,7 +236,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!1001 &8417937429238181539
+--- !u!1001 &3171985820617835132
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -218,7 +245,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2083689006821819069, guid: 354998e4bd407404980a483a92eece54, type: 3}
       propertyPath: m_Name
-      value: Center
+      value: BasicSword1
       objectReference: {fileID: 0}
     - target: {fileID: 2792027010537929743, guid: 354998e4bd407404980a483a92eece54, type: 3}
       propertyPath: m_RootOrder
@@ -270,8 +297,8 @@ PrefabInstance:
       objectReference: {fileID: 4011502626418845229}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 354998e4bd407404980a483a92eece54, type: 3}
---- !u!4 &5939615380436439724 stripped
+--- !u!4 &773050724193418867 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2792027010537929743, guid: 354998e4bd407404980a483a92eece54, type: 3}
-  m_PrefabInstance: {fileID: 8417937429238181539}
+  m_PrefabInstance: {fileID: 3171985820617835132}
   m_PrefabAsset: {fileID: 0}

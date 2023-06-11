@@ -12,9 +12,10 @@ public class BasicEnemy1 : EnemyBase
         Chase
     }
 
-    // N NE E SE S SW W NW 
-    List<float> SteeringDesire = new List<float>();
+    EnemyState eEnemyState;
 
+    // Starts from N clockwise
+    List<float> SteeringDesire = new List<float>();
     List<GameObject> CollisionObjects = new List<GameObject>();
 
     float Up;
@@ -24,6 +25,12 @@ public class BasicEnemy1 : EnemyBase
 
     int JumpCount = 0;
     bool InWater = false;
+
+    float TargetSpotted = 0;
+    Vector3 TargetLocation;
+    bool TargetInSight = false;
+
+    float AttackTime = 0;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -66,17 +73,17 @@ public class BasicEnemy1 : EnemyBase
 
     void dotIntent(Vector3 direction, float magnitude = 1)
     {
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 12; i++)
         {
-            SteeringDesire[i] += Vector3.Dot(Quaternion.AngleAxis(45 * i, Vector3.back) * Vector3.up, direction.normalized) * magnitude;
+            SteeringDesire[i] += Vector3.Dot(Quaternion.AngleAxis(30 * i, Vector3.back) * Vector3.up, direction.normalized) * magnitude;
         }
     }
 
     void dotIntent(Vector3 direction, float distance, float maxDistance)
     {
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 12; i++)
         {
-            float value = Vector3.Dot(Quaternion.AngleAxis(45 * i, Vector3.back) * Vector3.up, direction.normalized) / maxDistance * (maxDistance - distance);
+            float value = Vector3.Dot(Quaternion.AngleAxis(30 * i, Vector3.back) * Vector3.up, direction.normalized) / maxDistance * (maxDistance - distance);
             if (value < 0)
                 value = 0;
 
@@ -87,26 +94,26 @@ public class BasicEnemy1 : EnemyBase
     void dotDangers()
     {
         // check 8 directions for obstacles
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 12; i++)
         {
             gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
 
             RaycastHit2D hit2D;
             LayerMask layerMask;
             layerMask = 1 << 2;
-            hit2D = Physics2D.Raycast(transform.position, Quaternion.AngleAxis(45 * i, Vector3.back) * Vector3.up, layerMask);
+            hit2D = Physics2D.Raycast(transform.position, Quaternion.AngleAxis(30 * i, Vector3.back) * Vector3.up, 10);
 
             gameObject.layer = LayerMask.NameToLayer("Default");
 
             if (hit2D.collider == null)
             {
-                Debug.DrawLine(transform.position, transform.position + Quaternion.AngleAxis(45 * i, Vector3.back) * Vector3.up * 5, Color.green);
+                Debug.DrawLine(transform.position, transform.position + Quaternion.AngleAxis(30 * i, Vector3.back) * Vector3.up * 10, Color.green);
                 continue;
             }
 
-            if (hit2D.distance <= 5 && hit2D.collider.gameObject.tag != "Player")
+            if (hit2D.distance <= 10 && hit2D.collider.gameObject.tag != "Player")
             {
-                dotIntent(Quaternion.AngleAxis(45 * i, Vector3.back) * Vector3.up, hit2D.distance, 5);
+                dotIntent(Quaternion.AngleAxis(30 * i, Vector3.back) * Vector3.up, hit2D.distance, 10);
                 Debug.DrawLine(transform.position, hit2D.point, Color.red);
             }
         }
@@ -115,7 +122,7 @@ public class BasicEnemy1 : EnemyBase
     int GetMostIntent()
     {
         int most = 0;
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 12; i++)
         {
             if (SteeringDesire[i] > SteeringDesire[most])
                 most = i;
@@ -131,28 +138,40 @@ public class BasicEnemy1 : EnemyBase
             {
                 gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
                 RaycastHit2D hit2D;
-                LayerMask layerMask;
-                layerMask = 1 << 2;
-                hit2D = Physics2D.Raycast(transform.position, CollisionObjects[i].transform.position - transform.position, layerMask);
-                // Debug.DrawRay(transform.position, CollisionObjects[i].transform.position - transform.position, Color.red, 1.0f);
+
+                // While does not hit player, raycast 5 times, 4 corners and middle
+                hit2D = Physics2D.Raycast(transform.position, CollisionObjects[i].transform.position - transform.position, 10);
+                //Debug.DrawRay(transform.position, CollisionObjects[i].transform.position - transform.position, Color.red, 1.0f);
                 gameObject.layer = LayerMask.NameToLayer("Default");
-                if (hit2D.collider == null)
+                if (hit2D.collider == null || hit2D.collider.gameObject.tag != "Player")
                     return false;
-                if (hit2D.collider.gameObject.tag == "Player")
-                {
-                    dotIntent(CollisionObjects[i].transform.position - transform.position, 5);
-                    return true;
-                }
-                else
-                    return false;
+
+                dotIntent(CollisionObjects[i].transform.position - new Vector3(hit2D.point.x, hit2D.point.y, 0), 5);
+                TargetSpotted = 3;
+                TargetInSight = true;
+                TargetLocation = new Vector3(hit2D.point.x, hit2D.point.y, 0);
+                return true;
             }
         }
         return false;
     }
 
+    bool Attacking()
+    {
+        GameObject target = GameObject.FindGameObjectWithTag("Player");
+        AttackTime -= Time.deltaTime;
+        if (AttackTime > 0)
+            return false;
+
+        target.GetComponent<PlayerInfo>().TakeDamage(ItemBase.TypeOfDamage.Ice, 50);
+        AttackTime = 1;
+
+        return true;
+    }
+
     void dotClear()
     {
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 12; i++)
         {
             SteeringDesire[i] = 0;
         }
@@ -160,24 +179,24 @@ public class BasicEnemy1 : EnemyBase
 
     void PrintDot()
     {
-        Debug.Log("Dot: " + SteeringDesire[0] + ", " + SteeringDesire[1] + ", " + SteeringDesire[2] + ", " + SteeringDesire[3] + ", " + SteeringDesire[4] + ", " + SteeringDesire[5] + ", " + SteeringDesire[6] + ", " + SteeringDesire[7]);
+        Debug.Log("Dot: " + SteeringDesire[0] + ", " + SteeringDesire[1] + ", " + SteeringDesire[2] + ", " + SteeringDesire[3] + ", " + SteeringDesire[4] + ", " + SteeringDesire[5] + ", " + SteeringDesire[6] + ", " + SteeringDesire[7] + ", " + SteeringDesire[8] + ", " + SteeringDesire[9] + ", " + SteeringDesire[10] + ", " + SteeringDesire[11]);
     }
 
     private void Awake()
     {
         ShieldMax = 100;
         Shield = ShieldMax;
-        ShieldType = WeaponBase.TypeOfDamage.Physical;
+        ShieldType = ItemBase.TypeOfDamage.Physical;
         // ShieldWeakness ?
 
         eEnemyType = EnemyType.Normal;
         eEnemyVariation = EnemyVariation.Basic;
         eEnemyMovementType = EnemyMovementType.Normal;
 
-        HealthMax = 100;
-        Health = HealthMax;
+        status.HealthMax = 100;
+        status.Health = status.HealthMax;
         BaseDamage = 5;
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 12; i++)
             SteeringDesire.Add(0);
     }
 
@@ -207,6 +226,47 @@ public class BasicEnemy1 : EnemyBase
             Jump
             Attacks
              */
+            if (status.Health <= 0)
+            {
+                eEnemyState = EnemyState.Dead;
+            }
+
+            switch (eEnemyState)
+            {
+                case EnemyState.Idle:
+                    // Walks around a safe location about current position
+                    if (TargetInSight && (transform.position - TargetLocation).magnitude < 2)
+                        eEnemyState = EnemyState.Attacking;
+                    if (TargetSpotted > 0)
+                        eEnemyState = EnemyState.Chase;
+
+
+                    break;
+                case EnemyState.Attacking:
+                    // Pick what attack is happening
+                    Attacking();
+                    eEnemyState = EnemyState.Idle;
+
+                    break;
+                case EnemyState.Chase:
+                    // Going to last seem player location
+                    if (TargetSpotted <= 0)
+                        eEnemyState = EnemyState.Idle;
+
+                    if (TargetInSight && (transform.position - TargetLocation).magnitude < 2)
+                        eEnemyState = EnemyState.Attacking;
+
+                    TargetSpotted -= Time.deltaTime;
+                    dotIntent(TargetLocation - gameObject.transform.position, 5);
+
+                    break;
+                case EnemyState.Dead:
+                    // Death Animation
+                    // Drop Loot etc
+                    // Destroy
+                    Destroy(gameObject);
+                    break;
+            }
 
             int MostIntent = GetMostIntent();
             if (SteeringDesire[MostIntent] > 0)
@@ -216,36 +276,42 @@ public class BasicEnemy1 : EnemyBase
                     case 0: // Up
                         Jump();
                         break;
-                    case 1: // Up Right
+                    case 1: // Up Up Right
+                        GoRight();
                         Jump();
+                        break;
+                    case 2: // Up Right Right
                         GoRight();
                         break;
-                    case 2: // Right
+                    case 3: // Right
                         GoRight();
                         break;
-                    case 3: // Down Right
+                    case 4: // Down Right Right
                         GoRight();
                         break;
-                    case 4: // Down
+                    case 5: // Down down Right
                         break;
-                    case 5: // Down Left
+                    case 6: // Down
+                        break;
+                    case 7: // Down Down Left
                         GoLeft();
                         break;
-                    case 6: // Left
+                    case 8: // Down Left Left
                         GoLeft();
                         break;
-                    case 7: // Up Left
+                    case 9: // Left
+                        GoLeft();
+                        break;
+                    case 10: // Up Left Left
+                        GoLeft();
+                        break;
+                    case 11: // Up Up Left
+                        GoLeft();
                         Jump();
-                        GoLeft();
                         break;
                     default:
                         break;
                 }
-            }
-            else
-            {
-                // Idle
-
             }
         }
 
@@ -369,11 +435,11 @@ public class BasicEnemy1 : EnemyBase
         // Status Ailment Update
         for (int i = 0; i < StatusAilmentsList.Count; i++)
         {
-            if (!StatusAilmentsList[i].UpdateAilment())
+            if (!StatusAilmentsList[i].UpdateAilment(StatusAilmentsList, status))
                 StatusAilmentsList.Remove(StatusAilmentsList[i]); // Remove
         }
 
-        PrintDot();
+        // PrintDot();
         // Reset Intent
         dotClear();
     }

@@ -44,16 +44,16 @@ public class StatusAilmentManager : MonoBehaviour
     {
         switch (statusAilment.TypeOfAilment)
         {
-            case WeaponBase.TypeOfDamage.Fire:
+            case ItemBase.TypeOfDamage.Fire:
                 Status = FireStatus;
                 break;
-            case WeaponBase.TypeOfDamage.Ice:
+            case ItemBase.TypeOfDamage.Ice:
                 Status = IceStatus;
                 break;
-            case WeaponBase.TypeOfDamage.Natural:
+            case ItemBase.TypeOfDamage.Natural:
                 Status = NaturalStatus;
                 break;
-            case WeaponBase.TypeOfDamage.Lightning:
+            case ItemBase.TypeOfDamage.Lightning:
                 Status = LightningStatus;
                 break;
             default: return;

@@ -2,12 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BasicSword : WeaponBase
+public class BasicSword : ItemBase
 {
-    [SerializeField]
-    PlayerInfo playerInfo;
+    [SerializeField] PlayerInfo playerInfo;
 
+    List<GameObject> HitList = new List<GameObject>();
     List<GameObject> CollisionObjects = new List<GameObject>();
+
+    protected TypeOfDamage eTypeOfDamage;
+
+    protected int Proficiency;
+    protected int ProficiencyOwned;
+    protected int ProficiencyExp;
+    protected int ProficiencyRequired;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -27,17 +34,36 @@ public class BasicSword : WeaponBase
             CollisionObjects.Remove(collision.gameObject);
     }
 
+    public override void ResetHits()
+    {
+        HitList.Clear();
+    }
+
+    public override bool HitEntity(GameObject target)
+    {
+        if (!HitList.Contains(target))
+        {
+            HitList.Add(target);
+            return true;
+        }
+        return false;
+    }
+
     // Start is called before the first frame update
     void Awake()
     {
+        playerInfo = FindObjectOfType<PlayerInfo>();
         eTypeOfDamage = TypeOfDamage.Physical;
         BaseDamage = 10;
         Proficiency = 0;
         ProficiencyExp = 0;
         ProficiencyOwned = 0;
         ProficiencyRequired = 100; // Temp Number
-        eWeaponType = WeaponType.Swords;
+        eWeaponType = WeaponType.Sword;
         Level = 1;
+        itemID = ItemID.Sword;
+        MaxCount = 1;
+        Count = 1;
         // Tree
         // BonusStats
     }
@@ -50,6 +76,12 @@ public class BasicSword : WeaponBase
             for (int i = 0; i < CollisionObjects.Count; i++)
             {
                 GameObject obj = CollisionObjects[i];
+                if (obj == null)
+                {
+                    CollisionObjects.Remove(obj);
+                    i--;
+                    continue;
+                }
                 switch (obj.tag)
                 {
                     case "Destructible": // Destroy Destructible Objects
@@ -61,10 +93,13 @@ public class BasicSword : WeaponBase
                         {
                             // Damage Calculation
                             // Enemy TakeDamage( Weapon GetDamage + Player Equipments/Stats )
+                            obj.GetComponent<EnemyBase>().TakeDamage(eTypeOfDamage, GetDamage());
                         }
                         break;
                 }
             }
         }
+        else
+            ResetHits();
     }
 }

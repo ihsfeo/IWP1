@@ -4,52 +4,30 @@ using UnityEngine;
 
 public class StatusAilment : MonoBehaviour
 {
-    public WeaponBase.TypeOfDamage TypeOfAilment;
+    public ItemBase.TypeOfDamage TypeOfAilment;
     public int Level;
     public float Adv;
     public float AdvNeeded;
-    float TimeFromHit;
+    public float TimeFromHit;
 
-    float GetAdvNeeded(int level)
+    public virtual float GetAdvNeeded(int level)
     {
-        switch (TypeOfAilment)
-        {
-            case WeaponBase.TypeOfDamage.Physical:
-                if (level == 1) return 25;
-                else if (level == 2) return 75;
-                else if (level == 3) return 125;
-                break;
-            case WeaponBase.TypeOfDamage.Fire:
-                if (level == 1) return 25;
-                else if (level == 2) return 75;
-                else if (level == 3) return 125;
-                break;
-            case WeaponBase.TypeOfDamage.Ice:
-                if (level == 1) return 25;
-                else if (level == 2) return 100;
-                else if (level == 3) return 300;
-                break;
-            case WeaponBase.TypeOfDamage.Natural:
-                if (level == 1) return 25;
-                else if (level == 2) return 100;
-                else if (level == 3) return 250;
-                break;
-            case WeaponBase.TypeOfDamage.Lightning:
-                if (level == 1) return 50;
-                else if (level == 2) return 150;
-                else if (level == 3) return 300;
-                break;
-            //case WeaponBase.TypeOfDamage.Dark:
-            //case WeaponBase.TypeOfDamage.Light:
-        }
         return 0;
     }
     
-    public void IncreaseAdv(int amount)
+    public virtual void IncreaseAdv(int amount)
     {
+        TimeFromHit = 0;
         if (Level == 3)
             return;
+
         Adv += amount;
+        if (Adv >= GetAdvNeeded(Level + 1))
+        {
+            Adv -= GetAdvNeeded(Level + 1);
+            AdvNeeded = GetAdvNeeded(Level + 2);
+            Level++;
+        }
     }
 
     // For Use of Items etc, Big one time use things
@@ -61,11 +39,12 @@ public class StatusAilment : MonoBehaviour
             if (Level == 0)
                 return; 
             Adv += GetAdvNeeded(Level);
+            AdvNeeded = GetAdvNeeded(Level);
             Level--;
         }
     }
 
-    public virtual bool UpdateAilment()
+    public virtual bool UpdateAilment(List<StatusAilment> statusAilments, Status status)
     {
         if (TimeFromHit > 5)
         {

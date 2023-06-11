@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField]
-    private new Camera camera;
+    [SerializeField] private new Camera camera;
+    [SerializeField] Status status;
 
     public enum Direction
     {
@@ -15,8 +15,7 @@ public class PlayerMovement : MonoBehaviour
         Right
     }
 
-    [SerializeField]
-    PlayerInfo playerInfo;
+    [SerializeField] PlayerInfo playerInfo;
 
     Direction FacingDirection;
     Direction DashDirection;
@@ -39,11 +38,10 @@ public class PlayerMovement : MonoBehaviour
     float Right;
     float FallSpeed = 1;
 
-    float MovementSpeed = 1;
-
-    bool InWater = false;
     float OxygenLevel = 10;
+    float DrowningTime = 0;
     bool CantBreathe = false;
+    float LavaTime = 0;
 
     List<GameObject> CollisionObjects = new List<GameObject>();
 
@@ -98,7 +96,7 @@ public class PlayerMovement : MonoBehaviour
         PlatformPhasing = false;
 
         // Jump
-        if (!InWater)
+        if (!status.InWater)
         {
             if (Input.GetKeyDown(KeyCode.Space) && JumpCount < JumpCountMax)
             {
@@ -117,12 +115,14 @@ public class PlayerMovement : MonoBehaviour
 
         if (OxygenLevel < 10 && !CantBreathe)
         {
+            DrowningTime = 0;
             OxygenLevel += Time.deltaTime * 2;
             if (OxygenLevel > 10)
                 OxygenLevel = 10;
         }
         else if (OxygenLevel > 0 && CantBreathe)
         {
+            DrowningTime = 0;
             OxygenLevel -= Time.deltaTime;
             if (OxygenLevel < 0)
                 OxygenLevel = 0;
@@ -130,6 +130,14 @@ public class PlayerMovement : MonoBehaviour
         else if (OxygenLevel <= 0)
         {
             // Lose Health
+            DrowningTime += Time.deltaTime;
+            if (DrowningTime >= 1)
+            {
+                DrowningTime--;
+                status.Health--;
+                if (status.Health < 0)
+                    status.Health = 0;
+            }
         }
 
         // Going Down Platforms
@@ -153,6 +161,12 @@ public class PlayerMovement : MonoBehaviour
             for (int i = 0; i < CollisionObjects.Count; i++)
             {
                 GameObject obj = CollisionObjects[i];
+                if (obj == null)
+                {
+                    CollisionObjects.Remove(obj);
+                    i--;
+                    continue;
+                }
                 switch (obj.tag)
                 {
                     case "Destructible":
@@ -289,28 +303,29 @@ public class PlayerMovement : MonoBehaviour
         if (DashImmunity > 0)
         {
             DashImmunity -= Time.deltaTime;
-            if (InWater)
-                transform.position += new Vector3(Right * 0.7f, 0, 0);
+            if (status.InWater)
+                transform.position += new Vector3(Right * 0.7f * status.MovementSpeed, 0, 0);
             else
-                transform.position += new Vector3(Right, 0, 0);
+                transform.position += new Vector3(Right * status.MovementSpeed, 0, 0);
             Right /= 1 + 6f * Time.deltaTime;
         }
-        else if (!InWater)
+        else if (!status.InWater)
         {
-            transform.position += new Vector3(Right, 0, 0);
+            transform.position += new Vector3(Right * status.MovementSpeed, 0, 0);
             Right /= 1 + 8 * Time.deltaTime;
         }
         else
         {
-            transform.position += new Vector3(Right * 0.7f, 0, 0);
+            transform.position += new Vector3(Right * 0.7f * status.MovementSpeed, 0, 0);
             if (Mathf.Abs(Right) <= 0.055f)
                 Right /= 1.04f + Mathf.Abs(Right * 1.2f * 1.3f) * 30 * Time.deltaTime;
             else
                 Right /= 1f + Mathf.Abs(Right * 0.69f * 1.3f) * 30 * Time.deltaTime;
         }
 
-        InWater = false;
+        status.InWater = false;
         CantBreathe = false;
+        status.InLava = false;
 
         // Horizonal Collisions
         {
@@ -353,7 +368,7 @@ public class PlayerMovement : MonoBehaviour
                             transform.position.y > obj.transform.position.y - obj.transform.localScale.y / 2 &&
                             obj.transform.localScale.y > 0.5)
                         {
-                            InWater = true;
+                            status.InWater = true;
                             if (transform.position.y + transform.localScale.y / 4 > obj.transform.position.y - obj.transform.localScale.y / 2 &&
                                 transform.position.y + transform.localScale.y / 4 < obj.transform.position.y + obj.transform.localScale.y / 2 &&
                                 transform.position.x < obj.transform.position.x + obj.transform.localScale.x / 2 &&
@@ -361,6 +376,16 @@ public class PlayerMovement : MonoBehaviour
                             {
                                 CantBreathe = true;
                             }
+                        }
+                        break;
+                    case "Lava":
+                        if (transform.position.x - transform.localScale.x / 2 < obj.transform.position.x + obj.transform.localScale.x / 2 &&
+                            transform.position.x + transform.localScale.x / 2 > obj.transform.position.x - obj.transform.localScale.x / 2 &&
+                            transform.position.y - transform.localScale.y / 2 < obj.transform.position.y + obj.transform.localScale.y / 2 &&
+                            transform.position.y > obj.transform.position.y - obj.transform.localScale.y / 2 &&
+                            obj.transform.localScale.y > 0.5)
+                        {
+                            status.InLava = true;
                         }
                         break;
                 }
