@@ -53,9 +53,9 @@ public class IceAilment : StatusAilment
         return 0;
     }
 
-    public override bool UpdateAilment(List<StatusAilment> statusAilments, Status status)
+    public override bool UpdateAilment(Status status)
     {
-        int LevelOfFire = LevelOfAilment(statusAilments, ItemBase.TypeOfDamage.Fire);
+        int LevelOfFire = LevelOfAilment(status.StatusAilmentsList, ItemBase.TypeOfDamage.Fire);
         if (LevelOfFire > 0)
         {
             DecreaseAdv(LevelOfFire * Time.deltaTime);
@@ -92,7 +92,7 @@ public class IceAilment : StatusAilment
             status.MovementSpeed = 0;
 
         // Take Damage
-        if (Level == 2 && HasAilment(statusAilments, ItemBase.TypeOfDamage.Fire, 2))
+        if (Level == 2 && HasAilment(status.StatusAilmentsList, ItemBase.TypeOfDamage.Fire, 2))
         {
             TimeForDamage += Time.deltaTime;
             if (TimeForDamage >= 1)

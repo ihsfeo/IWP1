@@ -11,7 +11,6 @@ public class EnemyBase : MonoBehaviour
 
     protected int BaseDamage;
 
-    protected List<StatusAilment> StatusAilmentsList = new List<StatusAilment>();
     protected ItemBase.TypeOfDamage ShieldType;
     protected List<ItemBase.TypeOfDamage> ShieldWeakness = new List<ItemBase.TypeOfDamage>();
 
@@ -44,9 +43,9 @@ public class EnemyBase : MonoBehaviour
 
     int HasStatusAilment(ItemBase.TypeOfDamage Element)
     {
-        for (int i = 0; i < StatusAilmentsList.Count; i++)
+        for (int i = 0; i < status.StatusAilmentsList.Count; i++)
         {
-            if (StatusAilmentsList[i].TypeOfAilment == Element)
+            if (status.StatusAilmentsList[i].TypeOfAilment == Element)
                 return i;
         }
 
@@ -65,7 +64,7 @@ public class EnemyBase : MonoBehaviour
         int AilmentIndex = HasStatusAilment(Element);
         if (AilmentIndex != -1)
         {
-            StatusAilmentsList[AilmentIndex].IncreaseAdv(5);
+            status.StatusAilmentsList[AilmentIndex].IncreaseAdv(5);
             return;
         }
 
@@ -77,35 +76,35 @@ public class EnemyBase : MonoBehaviour
                 statusAilment.TypeOfAilment = ItemBase.TypeOfDamage.Fire;
                 statusAilment.Adv = 5;
                 statusAilment.AdvNeeded = statusAilment.GetAdvNeeded(0);
-                StatusAilmentsList.Add(statusAilment);
+                status.StatusAilmentsList.Add(statusAilment);
                 break;
             case ItemBase.TypeOfDamage.Fire:
                 statusAilment = new FireAilment();
                 statusAilment.TypeOfAilment = ItemBase.TypeOfDamage.Fire;
                 statusAilment.Adv = 5;
                 statusAilment.AdvNeeded = statusAilment.GetAdvNeeded(0);
-                StatusAilmentsList.Add(statusAilment);
+                status.StatusAilmentsList.Add(statusAilment);
                 break;
             case ItemBase.TypeOfDamage.Ice:
                 statusAilment = new IceAilment();
                 statusAilment.TypeOfAilment = ItemBase.TypeOfDamage.Fire;
                 statusAilment.Adv = 5;
                 statusAilment.AdvNeeded = statusAilment.GetAdvNeeded(0);
-                StatusAilmentsList.Add(statusAilment);
+                status.StatusAilmentsList.Add(statusAilment);
                 break;
             case ItemBase.TypeOfDamage.Natural:
                 statusAilment = new NaturalAilment();
                 statusAilment.TypeOfAilment = ItemBase.TypeOfDamage.Fire;
                 statusAilment.Adv = 5;
                 statusAilment.AdvNeeded = statusAilment.GetAdvNeeded(0);
-                StatusAilmentsList.Add(statusAilment);
+                status.StatusAilmentsList.Add(statusAilment);
                 break;
             case ItemBase.TypeOfDamage.Lightning:
                 statusAilment = new LightningAilment();
                 statusAilment.TypeOfAilment = ItemBase.TypeOfDamage.Fire;
                 statusAilment.Adv = 5;
                 statusAilment.AdvNeeded = statusAilment.GetAdvNeeded(0);
-                StatusAilmentsList.Add(statusAilment);
+                status.StatusAilmentsList.Add(statusAilment);
                 break;
             default:
                 break;

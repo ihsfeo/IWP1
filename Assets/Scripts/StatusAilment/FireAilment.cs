@@ -33,9 +33,9 @@ public class FireAilment : StatusAilment
         return 0;
     }
 
-    public override bool UpdateAilment(List<StatusAilment> statusAilments, Status status)
+    public override bool UpdateAilment(Status status)
     {
-        int LevelOfIce = LevelOfAilment(statusAilments, ItemBase.TypeOfDamage.Ice);
+        int LevelOfIce = LevelOfAilment(status.StatusAilmentsList, ItemBase.TypeOfDamage.Ice);
         if (LevelOfIce > 0)
         {
             DecreaseAdv(LevelOfIce * Time.deltaTime);

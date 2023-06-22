@@ -4,17 +4,21 @@ using UnityEngine;
 
 public class Status : MonoBehaviour
 {
+    // States
     public bool InWater = false;
     public bool InLava = false;
-    public float MovementSpeed = 1;
+    public bool IsFrozen = false;
+
+    // Stats
     public int HealthMax;
     public int Health;
-    public bool IsFrozen = false;
-    public float KnockbackResistance = 0;
+    public List<int> PResistances = new List<int>();
+    public List<int> FResistances = new List<int>();
+    public List<int> PDefences = new List<int>();
+    public List<int> FDefences = new List<int>();
+    public List<StatusAilment> StatusAilmentsList = new List<StatusAilment>();
 
-    private void Update()
-    {
-        if (Health < 0)
-            Health = 0;
-    }
+    // Additional Stats
+    public float MovementSpeed = 1;
+    public float KnockbackResistance = 0;
 }

@@ -433,10 +433,13 @@ public class BasicEnemy1 : EnemyBase
 
 
         // Status Ailment Update
-        for (int i = 0; i < StatusAilmentsList.Count; i++)
+        for (int i = 0; i < status.StatusAilmentsList.Count; i++)
         {
-            if (!StatusAilmentsList[i].UpdateAilment(StatusAilmentsList, status))
-                StatusAilmentsList.Remove(StatusAilmentsList[i]); // Remove
+            if (!status.StatusAilmentsList[i].UpdateAilment(status))
+            {
+                status.StatusAilmentsList.Remove(status.StatusAilmentsList[i]); // Remove
+                i--;
+            }
         }
 
         // PrintDot();

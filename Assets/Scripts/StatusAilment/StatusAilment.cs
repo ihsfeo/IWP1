@@ -44,7 +44,7 @@ public class StatusAilment : MonoBehaviour
         }
     }
 
-    public virtual bool UpdateAilment(List<StatusAilment> statusAilments, Status status)
+    public virtual bool UpdateAilment(Status status)
     {
         if (TimeFromHit > 5)
         {

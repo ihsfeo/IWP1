@@ -21,14 +21,8 @@ public class PlayerInfo : MonoBehaviour
 
     List<ItemBase> WeaponList = new List<ItemBase>();
     // List<EquipmentBase> EquipmentList = new List<EquipmentBase>();
-    List<StatusAilment> StatusAilmentsList = new List<StatusAilment>(); 
 
     public SceneState CurrentSceneState;
-
-    List<int> PResistances = new List<int>(); 
-    List<int> FResistances = new List<int>();
-    List<int> PDefences = new List<int>();
-    List<int> FDefences = new List<int>();
 
     public bool SwingingSword = false;
     int CurrentSwordSwing;
@@ -37,11 +31,16 @@ public class PlayerInfo : MonoBehaviour
 
     float LavaTime = 0;
 
+    void UpdateStatus()
+    {
+
+    }
+
     int HasStatusAilment(ItemBase.TypeOfDamage Element)
     {
-        for (int i = 0; i < StatusAilmentsList.Count; i++)
+        for (int i = 0; i < status.StatusAilmentsList.Count; i++)
         {
-            if (StatusAilmentsList[i].TypeOfAilment == Element)
+            if (status.StatusAilmentsList[i].TypeOfAilment == Element)
                 return i;
         }
 
@@ -60,8 +59,8 @@ public class PlayerInfo : MonoBehaviour
         // Input damage
         // calc damage received
         // Inflict Adv
-        int FinalDamage = damage * PDefences[(int)Element] / 100; // % Defence
-        FinalDamage -= FDefences[(int)Element]; // Flat Defence
+        int FinalDamage = damage * status.PDefences[(int)Element] / 100; // % Defence
+        FinalDamage -= status.FDefences[(int)Element]; // Flat Defence
         if (FinalDamage <= 0)
             FinalDamage = 1;
 
@@ -70,7 +69,7 @@ public class PlayerInfo : MonoBehaviour
         int AilmentIndex = HasStatusAilment(Element);
         if (AilmentIndex != -1)
         {
-            StatusAilmentsList[AilmentIndex].IncreaseAdv(5);
+            status.StatusAilmentsList[AilmentIndex].IncreaseAdv(5);
             return;
         }
 
@@ -82,42 +81,39 @@ public class PlayerInfo : MonoBehaviour
                 statusAilment.TypeOfAilment = ItemBase.TypeOfDamage.Physical;
                 statusAilment.Adv = 5;
                 statusAilment.AdvNeeded = statusAilment.GetAdvNeeded(1);
-                StatusAilmentsList.Add(statusAilment);
+                status.StatusAilmentsList.Add(statusAilment);
                 break;
             case ItemBase.TypeOfDamage.Fire:
                 statusAilment = new FireAilment();
                 statusAilment.TypeOfAilment = ItemBase.TypeOfDamage.Fire;
                 statusAilment.Adv = 5;
                 statusAilment.AdvNeeded = statusAilment.GetAdvNeeded(1);
-                StatusAilmentsList.Add(statusAilment);
+                status.StatusAilmentsList.Add(statusAilment);
                 break;
             case ItemBase.TypeOfDamage.Ice:
                 statusAilment = new IceAilment();
                 statusAilment.TypeOfAilment = ItemBase.TypeOfDamage.Ice;
                 statusAilment.Adv = 5;
                 statusAilment.AdvNeeded = statusAilment.GetAdvNeeded(1);
-                StatusAilmentsList.Add(statusAilment);
+                status.StatusAilmentsList.Add(statusAilment);
                 break;
             case ItemBase.TypeOfDamage.Natural:
                 statusAilment = new NaturalAilment();
                 statusAilment.TypeOfAilment = ItemBase.TypeOfDamage.Natural;
                 statusAilment.Adv = 5;
                 statusAilment.AdvNeeded = statusAilment.GetAdvNeeded(1);
-                StatusAilmentsList.Add(statusAilment);
+                status.StatusAilmentsList.Add(statusAilment);
                 break;
             case ItemBase.TypeOfDamage.Lightning:
                 statusAilment = new LightningAilment();
                 statusAilment.TypeOfAilment = ItemBase.TypeOfDamage.Lightning;
                 statusAilment.Adv = 5;
                 statusAilment.AdvNeeded = statusAilment.GetAdvNeeded(1);
-                StatusAilmentsList.Add(statusAilment);
+                status.StatusAilmentsList.Add(statusAilment);
                 break;
             default:
                 break;
         }
-
-
-
     }
 
     private void Awake()
@@ -131,7 +127,7 @@ public class PlayerInfo : MonoBehaviour
         statusAilment.TypeOfAilment = ItemBase.TypeOfDamage.Fire;
         statusAilment.Adv = 10;
         statusAilment.AdvNeeded = 25;
-        StatusAilmentsList.Add(statusAilment);
+        status.StatusAilmentsList.Add(statusAilment);
 
         for (int i = 0; i < 3; i++)
         {
@@ -140,10 +136,10 @@ public class PlayerInfo : MonoBehaviour
 
         for (int i = 0; i < 7; i++)
         {
-            PDefences.Add(0);
-            FDefences.Add(0);
-            PResistances.Add(0);
-            FResistances.Add(0);
+            status.PDefences.Add(0);
+            status.FDefences.Add(0);
+            status.PResistances.Add(0);
+            status.FResistances.Add(0);
         }
 
         EquipWeapon(0, tempWeapon);
@@ -204,14 +200,14 @@ public class PlayerInfo : MonoBehaviour
                     {
                         int FireIndex = HasStatusAilment(ItemBase.TypeOfDamage.Fire);
                         if (FireIndex >= 0)
-                            StatusAilmentsList[FireIndex].IncreaseAdv((int)LavaTime);
+                            status.StatusAilmentsList[FireIndex].IncreaseAdv((int)LavaTime);
                         else
                         {
                             StatusAilment statusAilment = new FireAilment();
                             statusAilment.TypeOfAilment = ItemBase.TypeOfDamage.Fire;
                             statusAilment.Adv = (int)LavaTime;
                             statusAilment.AdvNeeded = statusAilment.GetAdvNeeded(1);
-                            StatusAilmentsList.Add(statusAilment);
+                            status.StatusAilmentsList.Add(statusAilment);
                         }
                         status.Health -= (int)LavaTime;
                         if (status.Health < 0)
@@ -221,17 +217,17 @@ public class PlayerInfo : MonoBehaviour
                 }
 
                 // Status Ailment Update
-                for (int i = 0; i < StatusAilmentsList.Count; i++)
+                for (int i = 0; i < status.StatusAilmentsList.Count; i++)
                 {
                     // StatusAilmentsList[i].IncreaseAdv(10);
-                    if (!StatusAilmentsList[i].UpdateAilment(StatusAilmentsList, status))
+                    if (!status.StatusAilmentsList[i].UpdateAilment(status))
                     {
-                        statusAilmentManager.RemoveGauge(StatusAilmentsList[i]); // Remove UI
-                        StatusAilmentsList.Remove(StatusAilmentsList[i]); // Remove
+                        statusAilmentManager.RemoveGauge(status.StatusAilmentsList[i]); // Remove UI
+                        status.StatusAilmentsList.Remove(status.StatusAilmentsList[i]); // Remove
                         i--;
                         continue;
                     }
-                    statusAilmentManager.UpdateGauge(StatusAilmentsList[i]); // Update UI
+                    statusAilmentManager.UpdateGauge(status.StatusAilmentsList[i]); // Update UI
                 }
                 healthBar.UpdateHealthBar(status.HealthMax, status.Health);
                 break;

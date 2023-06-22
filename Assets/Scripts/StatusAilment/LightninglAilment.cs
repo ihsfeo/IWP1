@@ -33,7 +33,7 @@ public class LightningAilment : StatusAilment
         return 0;
     }
 
-    public override bool UpdateAilment(List<StatusAilment> statusAilments, Status status)
+    public override bool UpdateAilment(Status status)
     {
         if (TimeFromHit > 5)
         {
