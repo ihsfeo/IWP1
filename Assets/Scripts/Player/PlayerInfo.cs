@@ -20,7 +20,7 @@ public class PlayerInfo : MonoBehaviour
     [SerializeField] ItemBase tempWeapon, tempweapon;
 
     List<ItemBase> WeaponList = new List<ItemBase>();
-    // List<EquipmentBase> EquipmentList = new List<EquipmentBase>();
+    List<ItemBase> EquipmentList = new List<ItemBase>();
 
     public SceneState CurrentSceneState;
 
@@ -33,6 +33,17 @@ public class PlayerInfo : MonoBehaviour
 
     void UpdateStatus()
     {
+        // Take into account
+        // 1. Current Weapon Stats
+        // 2. Current Equipment Stats
+        // 3. Primary Stats
+        // 4. Upgraded Stats
+        //
+        // Only occurs when
+        // 1. Switching active weapon
+        // 2. Swtiching current equipment
+        // 3. Upgrades stats
+
 
     }
 
@@ -65,6 +76,8 @@ public class PlayerInfo : MonoBehaviour
             FinalDamage = 1;
 
         status.Health -= FinalDamage;
+        if (status.Health < 0)
+            status.Health = 0;
 
         int AilmentIndex = HasStatusAilment(Element);
         if (AilmentIndex != -1)
@@ -123,11 +136,11 @@ public class PlayerInfo : MonoBehaviour
         CurrentWeapon = 0;
         healthBar.UpdateHealthBar(status.HealthMax, status.Health);
 
-        StatusAilment statusAilment = new FireAilment();
-        statusAilment.TypeOfAilment = ItemBase.TypeOfDamage.Fire;
-        statusAilment.Adv = 10;
-        statusAilment.AdvNeeded = 25;
-        status.StatusAilmentsList.Add(statusAilment);
+        //StatusAilment statusAilment = new FireAilment();
+        //statusAilment.TypeOfAilment = ItemBase.TypeOfDamage.Fire;
+        //statusAilment.Adv = 10;
+        //statusAilment.AdvNeeded = 25;
+        //status.StatusAilmentsList.Add(statusAilment);
 
         for (int i = 0; i < 3; i++)
         {
@@ -166,6 +179,12 @@ public class PlayerInfo : MonoBehaviour
         // reset old weapon hits
         CurrentWeapon = slot;
         WeaponList[CurrentWeapon].gameObject.SetActive(true);
+        UpdateStatus();
+    }
+
+    void UseActive()
+    {
+        // Use Active Weapon Skill
     }
 
     private void Update()
@@ -185,6 +204,8 @@ public class PlayerInfo : MonoBehaviour
                         SwitchWeapon(1);
                     else if (Input.GetKeyDown(KeyCode.Alpha3))
                         SwitchWeapon(2);
+                    else if (Input.GetKeyDown(KeyCode.Q))
+                        UseActive(); // Active Skill
                 }
 
                 if (Input.GetKeyDown(KeyCode.I))

@@ -7,7 +7,7 @@ public class InventoryManager : MonoBehaviour
 {
     [SerializeField] ItemManager itemManager;
     [SerializeField] List<GameObject> InventorySlot = new List<GameObject>();
-    [SerializeField] GameObject HelmetSlot, WeaponSlot1, WeaponSlot2, WeaponSlot3;
+    [SerializeField] GameObject SlotHelmet, SlotChestplate, SlotLegging, SlotShoe, SlotWeapon1, SlotWeapon2, SlotWeapon3;
 
     List<ItemBase> Inventory = new List<ItemBase>();
     List<ItemBase> EquippedItems = new List<ItemBase>();
@@ -103,11 +103,36 @@ public class InventoryManager : MonoBehaviour
         return false;
     }
 
+    void Equip(int slot)
+    {
+        switch(Inventory[slot].ItemType)
+        {
+            case ItemBase.TypeOfItems.Helmet:
+            case ItemBase.TypeOfItems.Chestplate:
+            case ItemBase.TypeOfItems.Legging:
+            case ItemBase.TypeOfItems.Shoe:
+            {
+                ItemBase item = EquippedItems[(int)Inventory[slot].ItemType];
+                EquippedItems[(int)Inventory[slot].ItemType] = Inventory[slot];
+                Inventory[slot] = item;
+                break;
+                }
+            case ItemBase.TypeOfItems.Weapon:
+            default: break;
+        }
+    }
+
     private void Awake()
     {
+        // Init Inventory List
         for (int i = 0; i < 30; i++)
         {
             Inventory.Add(null);
+        }
+        // Init Equipped List
+        for (int i = 0; i < 7; i++)
+        {
+            EquippedItems.Add(null);
         }
     }
 

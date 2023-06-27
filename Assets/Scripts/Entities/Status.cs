@@ -20,5 +20,10 @@ public class Status : MonoBehaviour
 
     // Additional Stats
     public float MovementSpeed = 1;
-    public float KnockbackResistance = 0;
+    public float KnockbackResistance = 0; // Based on Hit location and hitter location, resistance is based on division
+
+    public void IncludeStatsOf(ItemBase item)
+    {
+
+    }
 }

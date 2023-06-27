@@ -63,7 +63,12 @@ public class ItemBase : MonoBehaviour
 
     public enum TypeOfItems
     {
-        Consumable = 0,
+        Helmet,
+        Chestplate,
+        Legging,
+        Shoe,
+        Weapon,
+        Consumable,
         NotConsumable,
         Total
     }
@@ -89,6 +94,7 @@ public class ItemBase : MonoBehaviour
     public ItemID itemID;
     public int MaxCount;
     public int Count;
+    public TypeOfItems ItemType;
 
     // Weapon Stuff
     protected int BaseDamage;
