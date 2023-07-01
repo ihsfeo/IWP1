@@ -15,24 +15,37 @@ public class CStats
 
         DefenceFlat,
         DefencePercentage,
+        FireDefenceFlat,
         FireDefencePercentage,
+        IceDefenceFlat,
         IceDefencePercentage,
+        NaturalDefenceFlat,
         NaturalDefencePercentage,
+        LightningDefenceFlat,
         LightningDefencePercentage,
+        PhysicalDefenceFlat,
         PhysicalDefencePercentage,
+        DarkDefenceFlat,
         DarkDefencePercentage,
+        LightDefenceFlat,
         LightDefencePercentage,
 
+        ResistanceFlat,
         ResistancePercentage,
+        FireResistanceFlat,
         FireResistancePercentage,
+        IceResistanceFlat,
         IceResistancePercentage,
+        NaturalResistanceFlat,
         NaturalResistancePercentage,
+        LightningResistanceFlat,
         LightningResistancePercentage,
+        PhysicalResistanceFlat,
         PhysicalResistancePercentage,
+        DarkResistanceFlat,
         DarkResistancePercentage,
+        LightResistanceFlat,
         LightResistancePercentage,
-
-        None,
 
         Total
     }
@@ -51,14 +64,22 @@ public class ItemBase : MonoBehaviour
 {
     public enum TypeOfDamage
     {
-        Physical = 0,
-        Fire,
+        Fire = 0,
         Ice,
-        Lightning,
         Natural,
+        Lightning,
+        Physical,
         Dark,
         Light,
         TotalTypes
+    }
+
+    public enum ItemRarity
+    {
+        Common = 0,
+        Uncommon,
+        Rare,
+        total
     }
 
     public enum TypeOfItems
@@ -92,6 +113,7 @@ public class ItemBase : MonoBehaviour
     // Item Stuff
     protected string ItemName;
     public ItemID itemID;
+    public ItemRarity Rarity;
     public int MaxCount;
     public int Count;
     public TypeOfItems ItemType;

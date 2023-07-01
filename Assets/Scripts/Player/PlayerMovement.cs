@@ -95,22 +95,26 @@ public class PlayerMovement : MonoBehaviour
         Vector3 oldPosition = transform.position;
         PlatformPhasing = false;
 
-        // Jump
-        if (!status.InWater)
+        if (status.IsShocked)
         {
-            if (Input.GetKeyDown(KeyCode.Space) && JumpCount < JumpCountMax)
+            // Jump
+            if (!status.InWater)
             {
-                Up = 12 * Time.deltaTime;
-                JumpCount++;
+                if (Input.GetKeyDown(KeyCode.Space) && JumpCount < JumpCountMax)
+                {
+                    Up = 12 * Time.deltaTime;
+                    JumpCount++;
+                }
             }
-        }
-        else
-        {
-            if (Input.GetKey(KeyCode.Space))
+            //Swim
+            else
             {
-                Up += 0.2f * Time.deltaTime;
+                if (Input.GetKey(KeyCode.Space))
+                {
+                    Up += 0.2f * Time.deltaTime;
+                }
+                FallSpeed *= 0.06f;
             }
-            FallSpeed *= 0.06f;
         }
 
         if (OxygenLevel < 10 && !CantBreathe)
@@ -219,80 +223,83 @@ public class PlayerMovement : MonoBehaviour
 
         oldPosition = transform.position;
 
-        // Horizontal Movement
-        if (Input.GetKey(KeyCode.A))
+        if (status.IsShocked)
         {
-            if (!Input.GetKey(KeyCode.D))
+            // Horizontal Movement
+            if (Input.GetKey(KeyCode.A))
             {
-                Right -= 0.5f * Time.deltaTime;
-                FacingDirection = Direction.Left;
-            }
-        }
-        else if (Input.GetKey(KeyCode.D))
-        {
-            Right += 0.5f * Time.deltaTime;
-            FacingDirection = Direction.Right;
-        }
-
-        // Dash
-        {
-            if (DashCD > 0)
-                DashCD -= Time.deltaTime;
-            if (DashInterval > 0)
-                DashInterval -= Time.deltaTime;
-            if (CanDash) // Unlocked Dashing
-            {
-                if (Input.GetKeyDown(KeyCode.A))
+                if (!Input.GetKey(KeyCode.D))
                 {
-                    if (DashCD <= 0) // Dashing Cooldown is over
+                    Right -= 0.5f * Time.deltaTime;
+                    FacingDirection = Direction.Left;
+                }
+            }
+            else if (Input.GetKey(KeyCode.D))
+            {
+                Right += 0.5f * Time.deltaTime;
+                FacingDirection = Direction.Right;
+            }
+
+            // Dash
+            {
+                if (DashCD > 0)
+                    DashCD -= Time.deltaTime;
+                if (DashInterval > 0)
+                    DashInterval -= Time.deltaTime;
+                if (CanDash) // Unlocked Dashing
+                {
+                    if (Input.GetKeyDown(KeyCode.A))
                     {
-                        if (DashInterval > 0) // if > 0 means time between taps is ok
+                        if (DashCD <= 0) // Dashing Cooldown is over
                         {
-                            // Checking if same Direction
-                            if (DashDirection == Direction.Left) // Successful Dash
+                            if (DashInterval > 0) // if > 0 means time between taps is ok
                             {
-                                Right = -35f * Time.deltaTime;
-                                DashCD = 0.4f;
-                                DashInterval = 0;
-                                DashImmunity = 0.1f;
+                                // Checking if same Direction
+                                if (DashDirection == Direction.Left) // Successful Dash
+                                {
+                                    Right = -35f * Time.deltaTime;
+                                    DashCD = 0.4f;
+                                    DashInterval = 0;
+                                    DashImmunity = 0.1f;
+                                }
+                                else
+                                {
+                                    DashInterval = 0.2f;
+                                    DashDirection = Direction.Left;
+                                }
                             }
-                            else
+                            else // First Tap in the direction
                             {
-                                DashInterval = 0.2f;
+                                DashInterval = 35f * Time.deltaTime;
                                 DashDirection = Direction.Left;
                             }
                         }
-                        else // First Tap in the direction
-                        {
-                            DashInterval = 35f * Time.deltaTime;
-                            DashDirection = Direction.Left;
-                        }
                     }
-                }
-                else if (Input.GetKeyDown(KeyCode.D))
-                {
-                    if (DashCD <= 0) // Dashing Cooldown is over
+                    else if (Input.GetKeyDown(KeyCode.D))
                     {
-                        if (DashInterval > 0) // if > 0 means time between taps is ok
+                        if (DashCD <= 0) // Dashing Cooldown is over
                         {
-                            // Checking if same Direction
-                            if (DashDirection == Direction.Right) // Successful Dash
+                            if (DashInterval > 0) // if > 0 means time between taps is ok
                             {
-                                Right = 35f * Time.deltaTime;
-                                DashCD = 0.4f;
-                                DashInterval = 0;
-                                DashImmunity = 0.1f;
+                                // Checking if same Direction
+                                if (DashDirection == Direction.Right) // Successful Dash
+                                {
+                                    Right = 35f * Time.deltaTime;
+                                    DashCD = 0.4f;
+                                    DashInterval = 0;
+                                    DashImmunity = 0.1f;
+                                }
+                                else
+                                {
+                                    DashInterval = 0.2f;
+                                    DashDirection = Direction.Right;
+                                }
                             }
-                            else
+                            else // First Tap in the direction
                             {
                                 DashInterval = 0.2f;
                                 DashDirection = Direction.Right;
                             }
-                        }
-                        else // First Tap in the direction
-                        {
-                            DashInterval = 0.2f;
-                            DashDirection = Direction.Right;
                         }
                     }
                 }

@@ -11,10 +11,7 @@ public class BasicSword : ItemBase
 
     protected TypeOfDamage eTypeOfDamage;
 
-    protected int Proficiency;
-    protected int ProficiencyOwned;
-    protected int ProficiencyExp;
-    protected int ProficiencyRequired;
+    protected WeaponProficiency weaponProficiency;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -55,10 +52,7 @@ public class BasicSword : ItemBase
         playerInfo = FindObjectOfType<PlayerInfo>();
         eTypeOfDamage = TypeOfDamage.Physical;
         BaseDamage = 10;
-        Proficiency = 0;
-        ProficiencyExp = 0;
-        ProficiencyOwned = 0;
-        ProficiencyRequired = 100; // Temp Number
+        weaponProficiency = new WeaponProficiency(Rarity);
         eWeaponType = WeaponType.Sword;
         Level = 1;
         itemID = ItemID.Sword;
@@ -93,7 +87,7 @@ public class BasicSword : ItemBase
                         {
                             // Damage Calculation
                             // Enemy TakeDamage( Weapon GetDamage + Player Equipments/Stats )
-                            obj.GetComponent<EnemyBase>().TakeDamage(eTypeOfDamage, GetDamage());
+                            weaponProficiency.IncreaseProficiency(obj.GetComponent<EnemyBase>().TakeDamage(eTypeOfDamage, GetDamage()));
                         }
                         break;
                 }

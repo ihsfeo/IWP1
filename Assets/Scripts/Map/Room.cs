@@ -19,4 +19,5 @@ public class Room : MonoBehaviour
         for (int i = 0; i < PathsCount; i++)
             EntranceDirection.Add(0);
     }
+
 }

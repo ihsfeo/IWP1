@@ -406,7 +406,7 @@ GameObject:
   - component: {fileID: 52363771}
   - component: {fileID: 52363770}
   m_Layer: 5
-  m_Name: Image (4)
+  m_Name: Weapon3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -425,7 +425,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 972187728}
-  m_RootOrder: 4
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -1193,7 +1193,7 @@ GameObject:
   - component: {fileID: 179304644}
   - component: {fileID: 179304643}
   m_Layer: 5
-  m_Name: Image (5)
+  m_Name: Weapon1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1212,7 +1212,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 972187728}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -1814,7 +1814,7 @@ GameObject:
   - component: {fileID: 244962313}
   - component: {fileID: 244962312}
   m_Layer: 5
-  m_Name: Image (1)
+  m_Name: Chestplate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1908,7 +1908,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1351489001}
-  m_RootOrder: 0
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -3123,7 +3123,7 @@ RectTransform:
   - {fileID: 542908254}
   - {fileID: 1009304636}
   m_Father: {fileID: 1351489001}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -4270,7 +4270,7 @@ RectTransform:
   m_Children:
   - {fileID: 1324619424}
   m_Father: {fileID: 1351489001}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -4398,7 +4398,7 @@ RectTransform:
   - {fileID: 655902889}
   - {fileID: 129771190}
   m_Father: {fileID: 1351489001}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -4417,7 +4417,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c9a4c8e44fea1d478a50858e6f9b422, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemManager: {fileID: 0}
+  itemManager: {fileID: 1298048623}
   InventorySlot:
   - {fileID: 1566314239}
   - {fileID: 960052529}
@@ -4425,37 +4425,13 @@ MonoBehaviour:
   - {fileID: 87731784}
   - {fileID: 506414540}
   - {fileID: 1280643957}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 85560511}
-  - {fileID: 1828020164}
-  - {fileID: 1421297407}
-  - {fileID: 1803418652}
-  - {fileID: 140258110}
-  - {fileID: 439634372}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 1345715200}
-  - {fileID: 302327332}
-  - {fileID: 1068386299}
-  - {fileID: 1072542211}
-  - {fileID: 1612991198}
-  - {fileID: 209989706}
-  - {fileID: 0}
-  - {fileID: 0}
-  SlotHelmet: {fileID: 0}
-  SlotChestplate: {fileID: 0}
-  SlotLegging: {fileID: 0}
-  SlotShoe: {fileID: 0}
-  SlotWeapon1: {fileID: 0}
-  SlotWeapon2: {fileID: 0}
-  SlotWeapon3: {fileID: 0}
+  SlotHelmet: {fileID: 1978795244}
+  SlotChestplate: {fileID: 244962310}
+  SlotLegging: {fileID: 2072330823}
+  SlotShoe: {fileID: 1732655695}
+  SlotWeapon1: {fileID: 179304641}
+  SlotWeapon2: {fileID: 860222283}
+  SlotWeapon3: {fileID: 52363768}
 --- !u!1 &701365765
 GameObject:
   m_ObjectHideFlags: 0
@@ -5545,7 +5521,7 @@ GameObject:
   - component: {fileID: 860222286}
   - component: {fileID: 860222285}
   m_Layer: 5
-  m_Name: Image (6)
+  m_Name: Weapon2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5564,7 +5540,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 972187728}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -6406,9 +6382,9 @@ RectTransform:
   - {fileID: 244962311}
   - {fileID: 2072330824}
   - {fileID: 1732655696}
-  - {fileID: 52363769}
   - {fileID: 179304642}
   - {fileID: 860222284}
+  - {fileID: 52363769}
   m_Father: {fileID: 129771190}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -7746,7 +7722,7 @@ RectTransform:
   - {fileID: 1646549778}
   - {fileID: 1082243902}
   m_Father: {fileID: 1351489001}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -8947,12 +8923,12 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 260802385}
   - {fileID: 661192267}
   - {fileID: 1188355265}
   - {fileID: 690912511}
   - {fileID: 1766966305}
   - {fileID: 529845639}
+  - {fileID: 260802385}
   m_Father: {fileID: 0}
   m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -9818,6 +9794,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 447a5e5e7bf73ac4b80bb8ed24663417, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Slot: 0
 --- !u!1 &1569936205
 GameObject:
   m_ObjectHideFlags: 0
@@ -11004,7 +10981,7 @@ GameObject:
   - component: {fileID: 1732655698}
   - component: {fileID: 1732655697}
   m_Layer: 5
-  m_Name: Image (3)
+  m_Name: Shoe
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11173,7 +11150,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1351489001}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -11999,7 +11976,7 @@ GameObject:
   - component: {fileID: 1978795247}
   - component: {fileID: 1978795246}
   m_Layer: 5
-  m_Name: Image (0)
+  m_Name: Helmet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12583,7 +12560,7 @@ GameObject:
   - component: {fileID: 2072330826}
   - component: {fileID: 2072330825}
   m_Layer: 5
-  m_Name: Image (2)
+  m_Name: Legging
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

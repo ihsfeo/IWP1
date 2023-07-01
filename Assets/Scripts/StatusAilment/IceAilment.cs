@@ -28,7 +28,10 @@ public class IceAilment : StatusAilment
             AdvNeeded = GetAdvNeeded(Level + 2);
             Level++;
             if (Level == 3)
+            {
                 FrozenTime = 1;
+                // Overlay Frozen Sprite
+            }
         }
     }
 
@@ -65,7 +68,10 @@ public class IceAilment : StatusAilment
         {
             if (Level < 3)
             {
-                DecreaseAdv(Time.deltaTime);
+                if (status.InWater)
+                    DecreaseAdv(Time.deltaTime * 0.5f);
+                else
+                    DecreaseAdv(Time.deltaTime);
                 if (Adv <= 0)
                     return false;
             }

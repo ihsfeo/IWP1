@@ -10,5 +10,20 @@ public class ClickAndDrag : MonoBehaviour
     GameObject Clone;
     InventoryManager inventoryManager;
 
+    // Short Press
+    public void ShowInfo()
+    {
+        /*
+        
+        Item Name
+        Description
+        Category of item
 
+        Weapon* Element Damage
+        Weapon* What kind of Weapon
+
+        Equipment* Weapon* Extra Stats
+         
+         */
+    }
 }

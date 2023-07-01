@@ -47,6 +47,9 @@ public class BasicEnemy1 : EnemyBase
 
     void Jump()
     {
+        if (status.IsShocked)
+            return;
+
         if (!InWater)
         {
             if (JumpCount == 0)
@@ -63,12 +66,14 @@ public class BasicEnemy1 : EnemyBase
 
     void GoRight()
     {
-        Right = 1f * Time.deltaTime;
+        if (!status.IsShocked)
+            Right = 1f * Time.deltaTime;
     }
 
     void GoLeft()
     {
-        Right = -1f * Time.deltaTime;
+        if (!status.IsShocked)
+            Right = -1f * Time.deltaTime;
     }
 
     void dotIntent(Vector3 direction, float magnitude = 1)
@@ -163,7 +168,7 @@ public class BasicEnemy1 : EnemyBase
         if (AttackTime > 0)
             return false;
 
-        target.GetComponent<PlayerInfo>().TakeDamage(ItemBase.TypeOfDamage.Ice, 50);
+        target.GetComponent<PlayerInfo>().TakeDamage(ItemBase.TypeOfDamage.Ice, 5);
         AttackTime = 1;
 
         return true;
@@ -184,6 +189,7 @@ public class BasicEnemy1 : EnemyBase
 
     private void Awake()
     {
+        status.InitStats();
         ShieldMax = 100;
         Shield = ShieldMax;
         ShieldType = ItemBase.TypeOfDamage.Physical;
@@ -193,8 +199,8 @@ public class BasicEnemy1 : EnemyBase
         eEnemyVariation = EnemyVariation.Basic;
         eEnemyMovementType = EnemyMovementType.Normal;
 
-        status.HealthMax = 100;
-        status.Health = status.HealthMax;
+        status.SetMaxHealth(100);
+        status.Health = (int)status.GetStat(CStats.Stats.MaxHealth);
         BaseDamage = 5;
         for (int i = 0; i < 12; i++)
             SteeringDesire.Add(0);

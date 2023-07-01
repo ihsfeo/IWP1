@@ -10,6 +10,8 @@ public class StatusAilment : MonoBehaviour
     public float AdvNeeded;
     public float TimeFromHit;
 
+    [SerializeField] protected GameObject FrozenSprite, ColdSprite, BurningSprite, BurnedSprite, ShockedSprite, PoisonedSprite;
+
     public virtual float GetAdvNeeded(int level)
     {
         return 0;

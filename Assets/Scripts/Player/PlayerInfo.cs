@@ -22,6 +22,8 @@ public class PlayerInfo : MonoBehaviour
     List<ItemBase> WeaponList = new List<ItemBase>();
     List<ItemBase> EquipmentList = new List<ItemBase>();
 
+    public int Gold;
+
     public SceneState CurrentSceneState;
 
     public bool SwingingSword = false;
@@ -43,7 +45,15 @@ public class PlayerInfo : MonoBehaviour
         // 1. Switching active weapon
         // 2. Swtiching current equipment
         // 3. Upgrades stats
+        if (WeaponList[CurrentWeapon])
+        {
 
+        }
+
+        for (int i = 0; i < EquipmentList.Count; i++)
+        {
+           status.IncludeStatsOf( EquipmentList[i] );
+        }
 
     }
 
@@ -65,19 +75,61 @@ public class PlayerInfo : MonoBehaviour
             CurrentSwordSwing = SwordCount;
     }
 
-    public void TakeDamage(ItemBase.TypeOfDamage Element, int damage)
+    public void TakeDamage(ItemBase.TypeOfDamage Element, int damage, bool AdditionalHit = false)
     {
-        // Input damage
-        // calc damage received
-        // Inflict Adv
-        int FinalDamage = damage * status.PDefences[(int)Element] / 100; // % Defence
-        FinalDamage -= status.FDefences[(int)Element]; // Flat Defence
-        if (FinalDamage <= 0)
-            FinalDamage = 1;
+        // Damage Calculation
+        {
+            if (Element == ItemBase.TypeOfDamage.Fire)
+            {
+                int index;
+                if ((index = HasStatusAilment(ItemBase.TypeOfDamage.Fire)) != -1)
+                {
+                    damage = (int)((float)damage * (1f + (float)status.StatusAilmentsList[index].Level / 10));
+                }
+            }
 
-        status.Health -= FinalDamage;
-        if (status.Health < 0)
-            status.Health = 0;
+            int FinalDamage = damage * (1 - (int)status.GetStat(CStats.Stats.FireDefencePercentage + 2 * (int)Element) / 100); // % Defence
+            FinalDamage -= (int)status.GetStat(CStats.Stats.FireDefenceFlat + 2 * (int)Element); // Flat Defence
+            if (FinalDamage <= 0)
+                FinalDamage = 1;
+
+            status.Health -= FinalDamage;
+            if (status.Health < 0)
+                status.Health = 0;
+        }
+
+        if (status.IsFrozen)
+        {
+            status.IsFrozen = false;
+            TakeDamage(ItemBase.TypeOfDamage.Ice, damage * 2);
+        }
+
+        if (Element == ItemBase.TypeOfDamage.Lightning && !AdditionalHit)
+        {
+            int index;
+            if ((index = HasStatusAilment(ItemBase.TypeOfDamage.Lightning)) != -1)
+            {
+                switch (status.StatusAilmentsList[index].Level)
+                {
+                    case 1:
+                        if (Random.Range(0, 10) <= 1)
+                        {
+                            // Chain
+                        }
+                        break;
+                    case 2:
+                        if (Random.Range(0, 5) <= 1)
+                        {
+                            // Chain
+                        }
+                        break;
+                    case 3:
+                        // Chain
+                        break;
+                    default: break;
+                }
+            }
+        }
 
         int AilmentIndex = HasStatusAilment(Element);
         if (AilmentIndex != -1)
@@ -131,28 +183,15 @@ public class PlayerInfo : MonoBehaviour
 
     private void Awake()
     {
-        status.HealthMax = 50;
-        status.Health = status.HealthMax;
+        status.InitStats();
+        status.SetMaxHealth(50);
+        status.Health = (int)status.GetStat(CStats.Stats.MaxHealth);
         CurrentWeapon = 0;
-        healthBar.UpdateHealthBar(status.HealthMax, status.Health);
-
-        //StatusAilment statusAilment = new FireAilment();
-        //statusAilment.TypeOfAilment = ItemBase.TypeOfDamage.Fire;
-        //statusAilment.Adv = 10;
-        //statusAilment.AdvNeeded = 25;
-        //status.StatusAilmentsList.Add(statusAilment);
+        healthBar.UpdateHealthBar((int)status.GetStat(CStats.Stats.MaxHealth), status.Health);
 
         for (int i = 0; i < 3; i++)
         {
             WeaponList.Add(null);
-        }
-
-        for (int i = 0; i < 7; i++)
-        {
-            status.PDefences.Add(0);
-            status.FDefences.Add(0);
-            status.PResistances.Add(0);
-            status.FResistances.Add(0);
         }
 
         EquipWeapon(0, tempWeapon);
@@ -162,7 +201,7 @@ public class PlayerInfo : MonoBehaviour
 
     private void Reset()
     {
-        status.Health = status.HealthMax;
+        status.Health = (int)status.GetStat(CStats.Stats.MaxHealth);
     }
 
     public void EquipWeapon(int slot, ItemBase weapon)
@@ -250,7 +289,7 @@ public class PlayerInfo : MonoBehaviour
                     }
                     statusAilmentManager.UpdateGauge(status.StatusAilmentsList[i]); // Update UI
                 }
-                healthBar.UpdateHealthBar(status.HealthMax, status.Health);
+                healthBar.UpdateHealthBar((int)status.GetStat(CStats.Stats.MaxHealth), status.Health);
                 break;
             case SceneState.Inventory:
                 if (Input.GetKeyDown(KeyCode.I))
