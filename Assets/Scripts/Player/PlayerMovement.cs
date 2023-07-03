@@ -95,7 +95,7 @@ public class PlayerMovement : MonoBehaviour
         Vector3 oldPosition = transform.position;
         PlatformPhasing = false;
 
-        if (status.IsShocked)
+        if (!status.IsShocked)
         {
             // Jump
             if (!status.InWater)
@@ -223,7 +223,7 @@ public class PlayerMovement : MonoBehaviour
 
         oldPosition = transform.position;
 
-        if (status.IsShocked)
+        if (!status.IsShocked)
         {
             // Horizontal Movement
             if (Input.GetKey(KeyCode.A))

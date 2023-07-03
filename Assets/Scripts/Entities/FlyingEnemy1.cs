@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BasicEnemy1 : EnemyBase
+public class FlyingEnemy1 : EnemyBase
 {
     enum EnemyState
     {
@@ -45,23 +45,16 @@ public class BasicEnemy1 : EnemyBase
             CollisionObjects.Remove(collision.gameObject);
     }
 
-    void Jump()
+    void GoUp()
     {
-        if (status.IsShocked)
-            return;
+        if (!status.IsShocked)
+            Up = 1f * Time.deltaTime;
+    }
 
-        if (!InWater)
-        {
-            if (JumpCount == 0)
-            {
-                Up = 12f * Time.deltaTime;
-                JumpCount++;
-            }
-        }
-        else
-        {
-            Up += 1 * Time.deltaTime;
-        }
+    void GoDown()
+    {
+        if (!status.IsShocked)
+            Up = -1f * Time.deltaTime;
     }
 
     void GoRight()
@@ -86,21 +79,38 @@ public class BasicEnemy1 : EnemyBase
 
     void dotIntent(Vector3 direction, float distance, float maxDistance)
     {
-        for (int i = 0; i < 12; i++)
+        if (distance < 2f)
         {
-            float value = 0;
-            if (distance < 0.3f)
-                value = Vector3.Dot(Quaternion.AngleAxis(30 * i, Vector3.back) * Vector3.up, direction.normalized) / maxDistance * (maxDistance - distance);
-            if (value < 0)
-                value = 0;
+            for (int i = 0; i < 12; i++)
+            {
+                float value = 0;
 
-            SteeringDesire[i] -= value;
+                Vector3 temp = Quaternion.AngleAxis(30 * i, Vector3.back) * Vector3.up;
+                if (direction == temp)
+                {
+                    SteeringDesire[i] = 0;
+                    continue;
+                }
+                value = Vector3.Dot(Quaternion.AngleAxis(30 * i, Vector3.back) * Vector3.up, direction.normalized) * 3;
+
+                if (value < 0)
+                    continue;
+                else if (value > 0)
+                {
+                    if (SteeringDesire[i] > 0 && SteeringDesire[i] - value <= 0)
+                        SteeringDesire[i] = 0.1f;
+                    else
+                        SteeringDesire[i] -= value;
+                }
+
+                // SteeringDesire[i] -= value;
+            }
         }
     }
 
     void dotDangers()
     {
-        // check 8 directions for obstacles
+        // check 12 directions for obstacles
         for (int i = 0; i < 12; i++)
         {
             gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
@@ -134,6 +144,9 @@ public class BasicEnemy1 : EnemyBase
             if (SteeringDesire[i] > SteeringDesire[most])
                 most = i;
         }
+
+        if (SteeringDesire[most] == 0)
+            return 12;
         return most;
     }
 
@@ -278,18 +291,20 @@ public class BasicEnemy1 : EnemyBase
             }
 
             int MostIntent = GetMostIntent();
+            Debug.Log("Intent: " + MostIntent);
             if (SteeringDesire[MostIntent] > 0)
             {
                 switch (MostIntent)
                 {
                     case 0: // Up
-                        Jump();
+                        GoUp();
                         break;
                     case 1: // Up Up Right
                         GoRight();
-                        Jump();
+                        GoUp();
                         break;
                     case 2: // Up Right Right
+                        GoUp();
                         GoRight();
                         break;
                     case 3: // Right
@@ -297,38 +312,44 @@ public class BasicEnemy1 : EnemyBase
                         break;
                     case 4: // Down Right Right
                         GoRight();
+                        GoDown();
                         break;
                     case 5: // Down down Right
+                        GoDown();
+                        GoRight();
                         break;
                     case 6: // Down
+                        GoDown();
                         break;
                     case 7: // Down Down Left
+                        GoDown();
                         GoLeft();
                         break;
                     case 8: // Down Left Left
+                        GoDown();
                         GoLeft();
                         break;
                     case 9: // Left
                         GoLeft();
                         break;
                     case 10: // Up Left Left
+                        GoUp();
                         GoLeft();
                         break;
                     case 11: // Up Up Left
                         GoLeft();
-                        Jump();
+                        GoUp();
                         break;
-                    default:
-                        break;
+                    default: break;
                 }
             }
         }
 
-        Up -= Time.deltaTime / 2 * FallSpeed;
-        if (Up < -TerminalVelocity / 2 * FallSpeed)
-            Up = -TerminalVelocity / 2 * FallSpeed;
-        else if (Up > TerminalVelocity / 2 * FallSpeed)
-            Up = TerminalVelocity / 2 * FallSpeed;
+        //Up -= Time.deltaTime / 2 * FallSpeed;
+        //if (Up < -TerminalVelocity / 2 * FallSpeed)
+        //    Up = -TerminalVelocity / 2 * FallSpeed;
+        //else if (Up > TerminalVelocity / 2 * FallSpeed)
+        //    Up = TerminalVelocity / 2 * FallSpeed;
         transform.position += new Vector3(0, Up, 0);
 
         // Vertical Collisions
@@ -455,5 +476,4 @@ public class BasicEnemy1 : EnemyBase
         // Reset Intent
         dotClear();
     }
-    
 }

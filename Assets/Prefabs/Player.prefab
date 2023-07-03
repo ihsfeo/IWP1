@@ -70,6 +70,9 @@ MonoBehaviour:
   inventoryManager: {fileID: 0}
   playerMovement: {fileID: 0}
   status: {fileID: 0}
+  tempWeapon: {fileID: 0}
+  tempweapon: {fileID: 0}
+  Gold: 0
   CurrentSceneState: 0
   SwingingSword: 0
 --- !u!114 &4011502626418845228
@@ -100,10 +103,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   InWater: 0
-  MovementSpeed: 1
-  HealthMax: 0
-  Health: 0
+  InLava: 0
   IsFrozen: 0
+  IsShocked: 0
+  Health: 0
+  StatusAilmentsList: []
+  MovementSpeed: 1
   KnockbackResistance: 0
 --- !u!50 &4011502626418845225
 Rigidbody2D:

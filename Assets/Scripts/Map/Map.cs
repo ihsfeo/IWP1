@@ -5,6 +5,4 @@ using UnityEngine;
 public class Map : MonoBehaviour
 {
     LinkedList<LinkedList<Room>> LLMap = new LinkedList<LinkedList<Room>>();
-
-
 }

@@ -34,6 +34,6 @@ public class WeaponProficiency : MonoBehaviour
 
     public int GetProficiencyRequired()
     {
-        return (Proficiency + 100) * (Proficiency + 1) * (Proficiency + 1) * (int)Rarity;
+        return (Proficiency + 100) * (Proficiency + 1) * (Proficiency + 1) * (int)(Rarity + 1);
     }
 }

@@ -30,6 +30,8 @@ public class Status : MonoBehaviour
 
     public void IncludeStatsOf(ItemBase item)
     {
+        if (!item)
+            return;
         
         List<CStats> stats;
 
