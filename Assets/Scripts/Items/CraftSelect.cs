@@ -5,11 +5,10 @@ using UnityEngine.UI;
 
 public class CraftSelect : MonoBehaviour
 {
-    [SerializeField]
-    CraftingManager craftingManager;
+    [SerializeField] CraftingManager craftingManager;
 
     public void CraftClicked(Button button)
     {
-        Debug.Log(button.name);
+        craftingManager.SelectCraft(int.Parse(button.name));
     }
 }

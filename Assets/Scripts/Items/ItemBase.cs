@@ -111,7 +111,7 @@ public class ItemBase : MonoBehaviour
     }
 
     // Item Stuff
-    protected string ItemName;
+    public string ItemName;
     public ItemID itemID;
     public ItemRarity Rarity;
     public int MaxCount;
