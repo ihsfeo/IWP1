@@ -124,7 +124,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37fa35315dfed7140b4707e297a03aab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ItemName: Sword
   itemID: 0
-  MaxCount: 0
-  Count: 0
+  Rarity: 0
+  MaxCount: 1
+  Count: 1
+  ItemType: 0
   playerInfo: {fileID: 0}

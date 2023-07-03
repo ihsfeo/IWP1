@@ -9,14 +9,14 @@ public class CraftingManager : MonoBehaviour
     [SerializeField] GameObject Content;
     [SerializeField] CraftingDescription Description;
     [SerializeField] CraftingCost Cost;
-    List<Button> ContentButtons;
+    List<Button> ContentButtons = new List<Button>();
 
     private void Awake()
     {
         for (int i = 0; i < CraftableList.Count; i++)
         {
             ContentButtons.Add(Content.transform.GetChild(i).GetComponent<Button>());
-            TMPro.TextMeshPro text = ContentButtons[i].transform.GetChild(0).GetComponent<TMPro.TextMeshPro>();
+            TMPro.TMP_Text text = ContentButtons[i].transform.GetChild(0).GetComponent<TMPro.TMP_Text>();
             text.text = CraftableList[i].ItemName;
             switch (CraftableList[i].Rarity)
             {

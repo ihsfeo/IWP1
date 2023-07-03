@@ -290,57 +290,59 @@ public class FlyingEnemy1 : EnemyBase
                     break;
             }
 
-            int MostIntent = GetMostIntent();
-            Debug.Log("Intent: " + MostIntent);
-            if (SteeringDesire[MostIntent] > 0)
+            int MostIntent;
+            if ((MostIntent = GetMostIntent()) < 12)
             {
-                switch (MostIntent)
+                if (SteeringDesire[MostIntent] > 0)
                 {
-                    case 0: // Up
-                        GoUp();
-                        break;
-                    case 1: // Up Up Right
-                        GoRight();
-                        GoUp();
-                        break;
-                    case 2: // Up Right Right
-                        GoUp();
-                        GoRight();
-                        break;
-                    case 3: // Right
-                        GoRight();
-                        break;
-                    case 4: // Down Right Right
-                        GoRight();
-                        GoDown();
-                        break;
-                    case 5: // Down down Right
-                        GoDown();
-                        GoRight();
-                        break;
-                    case 6: // Down
-                        GoDown();
-                        break;
-                    case 7: // Down Down Left
-                        GoDown();
-                        GoLeft();
-                        break;
-                    case 8: // Down Left Left
-                        GoDown();
-                        GoLeft();
-                        break;
-                    case 9: // Left
-                        GoLeft();
-                        break;
-                    case 10: // Up Left Left
-                        GoUp();
-                        GoLeft();
-                        break;
-                    case 11: // Up Up Left
-                        GoLeft();
-                        GoUp();
-                        break;
-                    default: break;
+                    switch (MostIntent)
+                    {
+                        case 0: // Up
+                            GoUp();
+                            break;
+                        case 1: // Up Up Right
+                            GoRight();
+                            GoUp();
+                            break;
+                        case 2: // Up Right Right
+                            GoUp();
+                            GoRight();
+                            break;
+                        case 3: // Right
+                            GoRight();
+                            break;
+                        case 4: // Down Right Right
+                            GoRight();
+                            GoDown();
+                            break;
+                        case 5: // Down down Right
+                            GoDown();
+                            GoRight();
+                            break;
+                        case 6: // Down
+                            GoDown();
+                            break;
+                        case 7: // Down Down Left
+                            GoDown();
+                            GoLeft();
+                            break;
+                        case 8: // Down Left Left
+                            GoDown();
+                            GoLeft();
+                            break;
+                        case 9: // Left
+                            GoLeft();
+                            break;
+                        case 10: // Up Left Left
+                            GoUp();
+                            GoLeft();
+                            break;
+                        case 11: // Up Up Left
+                            GoLeft();
+                            GoUp();
+                            break;
+                        default: break;
+                    }
                 }
             }
         }
