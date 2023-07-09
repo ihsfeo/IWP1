@@ -168,7 +168,6 @@ public class FlyingEnemy1 : EnemyBase
 
                 dotIntent(CollisionObjects[i].transform.position - new Vector3(hit2D.point.x, hit2D.point.y, 0), 5);
                 TargetSpotted = 3;
-                TargetInSight = true;
                 TargetLocation = new Vector3(hit2D.point.x, hit2D.point.y, 0);
                 return true;
             }
@@ -233,10 +232,7 @@ public class FlyingEnemy1 : EnemyBase
     {
         Vector3 oldPosition = transform.position;
 
-        if (SeePlayer())
-        {
-            // Debug.Log("Sheesh");
-        }
+        TargetInSight = SeePlayer();
 
         dotDangers();
 
@@ -279,7 +275,7 @@ public class FlyingEnemy1 : EnemyBase
                         eEnemyState = EnemyState.Attacking;
 
                     TargetSpotted -= Time.deltaTime;
-                    dotIntent(TargetLocation - gameObject.transform.position, 5);
+                    dotIntent(TargetLocation - transform.position, 5);
 
                     break;
                 case EnemyState.Dead:
@@ -384,18 +380,6 @@ public class FlyingEnemy1 : EnemyBase
                         {
                             transform.position = new Vector3(transform.position.x, obj.transform.position.y - obj.transform.localScale.y / 2 - 0.5f, 0);
                             Up = 0.0f;
-                        }
-                    }
-                    break;
-                case "Platform":
-                    // Stand on top
-                    if (obj.transform.position.y + 0.5 > transform.position.y - 0.5)
-                    {
-                        if (Mathf.Abs(oldPosition.x - obj.transform.position.x) <= obj.transform.localScale.x / 2 + 0.5 && oldPosition.y >= obj.transform.position.y + 1)
-                        {
-                            transform.position = new Vector3(transform.position.x, obj.transform.position.y + 1, 0);
-                            Up = 0.0f;
-                            JumpCount = 0;
                         }
                     }
                     break;

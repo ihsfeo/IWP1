@@ -5,5 +5,11 @@ using UnityEngine;
 public class RoomPart : Room
 {
     public List<Direction> SameRoom = new List<Direction>();
-    public List<Direction> EntranceDirection = new List<Direction>();
+    public List<Entrance> Entrances = new List<Entrance>();
+    Room room;
+
+    public void init()
+    {
+        room = transform.parent.GetComponent<Room>();
+    }
 }

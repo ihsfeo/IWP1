@@ -48,53 +48,91 @@ public class MapManager : MonoBehaviour
         // Occupy each area with important structures
         // Occupy each area with rooms
 
+
         int areaCount = 0;
-        while (areaCount < 6)
+        // Area Generation
         {
-            int AreaSizeX = (int)AreaSize[areaCount].x;
-            int AreaSizeY = (int)AreaSize[areaCount].y;
-
-            switch (areaCount)
+            while (areaCount < 6)
             {
-                case 0: {
-                        int StartX = 0;
-                        int StartY = Random.Range(0, SizeY - AreaSizeY);
+                int AreaSizeX = (int)AreaSize[areaCount].x;
+                int AreaSizeY = (int)AreaSize[areaCount].y;
 
-                        // Make Sure Area1 Includes spawning area
-                        if (StartingPosition.y - StartY >= AreaSizeY)
+                switch (areaCount)
+                {
+                    case 0:
                         {
-                            continue;
+                            int StartX = 0;
+                            int StartY = Random.Range(0, SizeY - AreaSizeY);
+
+                            // Make Sure Area1 Includes spawning area
+                            if (StartingPosition.y - StartY >= AreaSizeY)
+                            {
+                                continue;
+                            }
+
+                            AreaSize[areaCount] = new Vector2(StartX, StartY);
+
+                            break;
                         }
+                    case 1:
+                        {
+                            // Has to be somewhat close to the 1st area taht it can be connected
+                            break;
+                        }
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    default: continue;
+                }
 
-                        AreaSize[areaCount] = new Vector2(StartX, StartY);
-
-                        break;
-                    }
-                case 1: {
-                        // Has to be somewhat close to the 1st area taht it can be connected
-                        break;
-                    }
-                case 2:
-                case 3:
-                case 4:
-                case 5:
-                default: continue;
+                areaCount++;
             }
+        }
 
-            areaCount++;
+        // Important Structures
+        {
+            // just state a general position for structures in their respective areas
+            areaCount = 0;
+            while (areaCount < 6)
+            {
+                switch (areaCount)
+                {
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    default: continue;
+                }
+
+                areaCount++;
+            }
+        }
+
+        // Rooms
+        {
+            // from the already existing room, make another room that fits and connect it
+            areaCount = 0;
+            while (areaCount < 6)
+            {
+                switch (areaCount)
+                {
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                    case 5:
+                    default: continue;
+                }
+
+                areaCount++;
+            }
         }
 
 
-
         return false;
-    }
-
-    // Get which room currently in
-    // get direction going
-    // get next room
-    // get next room's entrance
-    public void MapChange()
-    {
-
     }
 }

@@ -6,42 +6,66 @@ using UnityEngine.UI;
 public class InventoryManager : MonoBehaviour
 {
     [SerializeField] ItemManager itemManager;
-    [SerializeField] List<GameObject> InventorySlot = new List<GameObject>();
+    [SerializeField] List<GameObject> InventoryRows = new List<GameObject>();
     [SerializeField] GameObject SlotHelmet, SlotChestplate, SlotLegging, SlotShoe, SlotWeapon1, SlotWeapon2, SlotWeapon3;
 
     List<ItemBase> Inventory = new List<ItemBase>();
     List<ItemBase> EquippedItems = new List<ItemBase>();
+    List<GameObject> InventorySlot = new List<GameObject>();
 
-    //bool CanPickUp(ItemBase Item)
-    //{
-    //    for (int i = 0; i < Inventory.Count; i++)
-    //    {
-    //        if (Inventory[i].itemID == Item.itemID && Inventory[i].Count < Inventory[i].MaxCount)
-    //            return true;
-    //        else if (Inventory[i] == null)
-    //            return true;
-    //    }
-    //    return false;
-    //}
+    public bool CanPickUp(ItemBase Item)
+    {
+        for (int i = 0; i < Inventory.Count; i++)
+        {
+            if (Inventory[i] == null)
+                return true;
+            else if (Inventory[i].itemID == Item.itemID && Inventory[i].Count < Inventory[i].MaxCount)
+                return true;
+        }
+        return false;
+    }
 
-    void AddToInventory(ItemBase Item)
+    public int AddToInventory(ItemBase Item)
     {
         int AmountToAdd = Item.Count;
         for (int i = 0; i < Inventory.Count; i++)
         {
+            if (AmountToAdd <= 0)
+                return 0;
+
             ItemBase temp = Inventory[i];
-            if (temp.itemID == Item.itemID && temp.Count < temp.MaxCount)
+            if (temp == null)
+            {
+                Inventory[i] = Item;
+                Inventory[i].Count = AmountToAdd;
+
+                Instantiate(Inventory[i].gameObject, InventorySlot[i].transform);
+
+                InventorySlot[i].transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
+                InventorySlot[i].transform.GetChild(0).GetComponent<Image>().enabled = true;
+                InventorySlot[i].transform.GetChild(0).gameObject.SetActive(true);
+                InventorySlot[i].transform.GetChild(0).localScale = new Vector3(Item.transform.localScale.x * 100, Item.transform.localScale.y * 100, 1);
+
+                if (AmountToAdd > Item.MaxCount)
+                {
+                    Inventory[i].Count = Item.MaxCount;
+                    AmountToAdd -= Item.MaxCount;
+                }
+                else
+                    AmountToAdd = 0;
+            }
+            else if (temp.itemID == Item.itemID && temp.Count < temp.MaxCount)
             {
                 if (AmountToAdd + temp.Count - temp.MaxCount < 0)
                 {
-                    temp.Count += AmountToAdd;
-                    AmountToAdd -= temp.MaxCount - temp.Count;
-                    return;
+                    Inventory[i].Count += AmountToAdd;
+                    AmountToAdd -= Inventory[i].MaxCount - Inventory[i].Count;
+                    return 0;
                 }
                 else
                 {
                     AmountToAdd -= temp.MaxCount - temp.Count;
-                    temp.Count = temp.MaxCount;
+                    Inventory[i].Count = temp.MaxCount;
                 }
             }
         }
@@ -72,9 +96,9 @@ public class InventoryManager : MonoBehaviour
         }
 
         if (AmountToAdd > 0)
-            Item.Count = AmountToAdd;
-        else
-            Destroy(Item.gameObject);
+            return AmountToAdd;
+
+        return 0;
     }
 
     public bool HasMaterials(ItemBase Material1, int count1, ItemBase Material2 = null, int count2 = 0, ItemBase Material3 = null, int count3 = 0)
@@ -122,12 +146,18 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    private void Awake()
+    public void init()
     {
         // Init Inventory List
-        for (int i = 0; i < 30; i++)
+        for (int i = 0; i < InventoryRows.Count; i++)
         {
-            Inventory.Add(null);
+            for (int j = 0; j < InventoryRows[i].transform.childCount; j++)
+            {
+                InventorySlot.Add(InventoryRows[i].transform.GetChild(j).gameObject);
+                InventorySlot[i * 6 + j].AddComponent<ClickAndDrag>();
+                InventorySlot[i * 6 + j].GetComponent<ClickAndDrag>().Slot = i * 6 + j;
+                Inventory.Add(null);
+            }
         }
         // Init Equipped List
         for (int i = 0; i < 7; i++)

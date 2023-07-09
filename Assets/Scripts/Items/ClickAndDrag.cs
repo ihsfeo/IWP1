@@ -3,12 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class ClickAndDrag : MonoBehaviour
+public class ClickAndDrag : MonoBehaviour, IEventSystemHandler
 {
     public int Slot;
     int SlotToSwapWith;
     GameObject Clone;
     InventoryManager inventoryManager;
+
+    private void Awake()
+    {
+        
+    }
 
     // Short Press
     public void ShowInfo()

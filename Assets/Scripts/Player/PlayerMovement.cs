@@ -61,7 +61,7 @@ public class PlayerMovement : MonoBehaviour
     {
         JumpCountMax = 3;
         JumpCount = 0;
-        TerminalVelocity = 4;
+        TerminalVelocity = 2;
 
         DashDirection = Direction.Left;
         DashCD = 0;
@@ -307,27 +307,29 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Horizontal Movement Update
-        if (DashImmunity > 0)
-        {
-            DashImmunity -= Time.deltaTime;
-            if (status.InWater)
-                transform.position += new Vector3(Right * 0.7f * status.MovementSpeed, 0, 0);
-            else
+        { 
+            if (DashImmunity > 0)
+            {
+                DashImmunity -= Time.deltaTime;
+                if (status.InWater)
+                    transform.position += new Vector3(Right * 0.7f * status.MovementSpeed, 0, 0);
+                else
+                    transform.position += new Vector3(Right * status.MovementSpeed, 0, 0);
+                Right /= 1 + 6f * Time.deltaTime;
+            }
+            else if (!status.InWater)
+            {
                 transform.position += new Vector3(Right * status.MovementSpeed, 0, 0);
-            Right /= 1 + 6f * Time.deltaTime;
-        }
-        else if (!status.InWater)
-        {
-            transform.position += new Vector3(Right * status.MovementSpeed, 0, 0);
-            Right /= 1 + 8 * Time.deltaTime;
-        }
-        else
+                Right /= 1 + 8 * Time.deltaTime;
+            }
+            else
         {
             transform.position += new Vector3(Right * 0.7f * status.MovementSpeed, 0, 0);
             if (Mathf.Abs(Right) <= 0.055f)
                 Right /= 1.04f + Mathf.Abs(Right * 1.2f * 1.3f) * 30 * Time.deltaTime;
             else
                 Right /= 1f + Mathf.Abs(Right * 0.69f * 1.3f) * 30 * Time.deltaTime;
+        }
         }
 
         status.InWater = false;

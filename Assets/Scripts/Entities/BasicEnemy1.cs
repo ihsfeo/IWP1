@@ -18,6 +18,8 @@ public class BasicEnemy1 : EnemyBase
     List<float> SteeringDesire = new List<float>();
     List<GameObject> CollisionObjects = new List<GameObject>();
 
+    [SerializeField] ItemManager itemManager;
+
     float Up;
     float Right;
     float TerminalVelocity = 4f;
@@ -273,6 +275,10 @@ public class BasicEnemy1 : EnemyBase
                     // Death Animation
                     // Drop Loot etc
                     // Destroy
+
+                    DroppedItem temp = GameObject.Instantiate(itemManager.droppedItem).GetComponent<DroppedItem>();
+                    temp.transform.position = transform.position;
+                    temp.Init(ItemBase.ItemID.Sword, 1, itemManager);
                     Destroy(gameObject);
                     break;
             }

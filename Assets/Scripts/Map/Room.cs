@@ -19,15 +19,15 @@ public class Room : MonoBehaviour
     // Check if viable room
     // if this room overlaps
     // if the entrances of the room would lead to another room which doesnt have an entrance there
-    public List<RoomPart> GetRoom(Direction direction)
+    public List<RoomPart> GetRoomPart(Direction direction)
     {
         List<RoomPart> rtn = new List<RoomPart>();
 
         for (int i = 0; i < RoomParts.Count; i++)
         {
-            for (int j = 0; j < RoomParts[i].EntranceDirection.Count; i++)
+            for (int j = 0; j < RoomParts[i].Entrances.Count; i++)
             {
-                if (RoomParts[i].EntranceDirection[j] == direction)
+                if (RoomParts[i].Entrances[j].GetDirection() == direction)
                 {
                     rtn.Add(RoomParts[i]);
                     break;

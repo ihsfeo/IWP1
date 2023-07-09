@@ -57,6 +57,16 @@ public class PlayerInfo : MonoBehaviour
 
     }
 
+    public bool CanPickup(ItemBase item)
+    {
+        return inventoryManager.CanPickUp(item);
+    }
+
+    public int AddToInventory(ItemBase item)
+    {
+        return inventoryManager.AddToInventory(item);
+    }
+
     int HasStatusAilment(ItemBase.TypeOfDamage Element)
     {
         for (int i = 0; i < status.StatusAilmentsList.Count; i++)
@@ -188,6 +198,8 @@ public class PlayerInfo : MonoBehaviour
         status.Health = (int)status.GetStat(CStats.Stats.MaxHealth);
         CurrentWeapon = 0;
         healthBar.UpdateHealthBar((int)status.GetStat(CStats.Stats.MaxHealth), status.Health);
+
+        inventoryManager.init();
 
         for (int i = 0; i < 3; i++)
         {
