@@ -15,7 +15,13 @@ public class EnemyBase : MonoBehaviour
 
     protected ItemBase.TypeOfDamage ShieldType;
     protected List<ItemBase.TypeOfDamage> ShieldWeakness = new List<ItemBase.TypeOfDamage>();
-
+    public enum EnemyState
+    {
+        Idle,
+        Attacking,
+        Dead,
+        Chase
+    }
     public enum EnemyType
     {
         Normal = 0,
@@ -42,6 +48,8 @@ public class EnemyBase : MonoBehaviour
     protected EnemyType eEnemyType;
     protected EnemyMovementType eEnemyMovementType;
     protected EnemyVariation eEnemyVariation;
+    protected EnemyState eEnemyState;
+
 
     int HasStatusAilment(ItemBase.TypeOfDamage Element)
     {
@@ -162,5 +170,11 @@ public class EnemyBase : MonoBehaviour
         }
 
         return 1;
+    }
+
+    public virtual void Reset()
+    {
+        status.Health = (int)status.GetStat(CStats.Stats.MaxHealth);
+        eEnemyState = EnemyState.Idle;
     }
 }

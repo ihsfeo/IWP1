@@ -44,16 +44,21 @@ public class PlayerMovement : MonoBehaviour
     float LavaTime = 0;
 
     List<GameObject> CollisionObjects = new List<GameObject>();
+    List<CameraBounds> cameraBounds = new List<CameraBounds>();
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag != "Untagged")
+        if (collision.gameObject.tag == "CameraBounds")
+            cameraBounds.Add(collision.gameObject.GetComponent<CameraBounds>());
+        else if (collision.gameObject.tag != "Untagged")
             CollisionObjects.Add(collision.gameObject);
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.gameObject.tag != "Untagged")
+        if (collision.gameObject.tag == "CameraBounds")
+            cameraBounds.Remove(collision.gameObject.GetComponent<CameraBounds>());
+        else if (collision.gameObject.tag != "Untagged")
             CollisionObjects.Remove(collision.gameObject);
     }
 
@@ -61,7 +66,7 @@ public class PlayerMovement : MonoBehaviour
     {
         JumpCountMax = 3;
         JumpCount = 0;
-        TerminalVelocity = 2;
+        TerminalVelocity = 1;
 
         DashDirection = Direction.Left;
         DashCD = 0;
@@ -70,10 +75,10 @@ public class PlayerMovement : MonoBehaviour
         CanDash = true;
     }
 
-    // Start is called before the first frame update
-    void Start()
+    public void SpeedZero()
     {
-        
+        Right = 0;
+        Up = 0;
     }
 
     // Update is called once per frame
@@ -423,8 +428,40 @@ public class PlayerMovement : MonoBehaviour
             else if (cPosition.y - transform.position.y < -6)
             {
                 cPosition += new Vector3(0, -6 + transform.position.y - cPosition.y, 0);
-                
             }
+            if (cPosition.x - transform.position.x > 10)
+            {
+                cPosition += new Vector3(10 + transform.position.x - cPosition.x, 0, 0);
+            }
+            else if (cPosition.x - transform.position.x < -10)
+            {
+                cPosition += new Vector3(-10 + transform.position.x - cPosition.x, 0, 0);
+            }
+
+            for (int i = 0; i < cameraBounds.Count; i++)
+            {
+                switch (cameraBounds[i].direction)
+                {
+                    case Room.Direction.Up:
+                        if (cPosition.y >= cameraBounds[i].transform.position.y - cameraBounds[i].transform.localScale.y / 2)
+                            cPosition.y = cameraBounds[i].transform.position.y - cameraBounds[i].transform.localScale.y / 2;
+                        break;
+                    case Room.Direction.Down:
+                        if (cPosition.y <= cameraBounds[i].transform.position.y + cameraBounds[i].transform.localScale.y / 2)
+                            cPosition.y = cameraBounds[i].transform.position.y + cameraBounds[i].transform.localScale.y / 2;
+                        break;
+                    case Room.Direction.Left:
+                        if (cPosition.x <= cameraBounds[i].transform.position.x + cameraBounds[i].transform.localScale.x / 2)
+                            cPosition.x = cameraBounds[i].transform.position.x + cameraBounds[i].transform.localScale.x / 2;
+                        break;
+                    case Room.Direction.Right:
+                        if (cPosition.x >= cameraBounds[i].transform.position.x - cameraBounds[i].transform.localScale.x / 2)
+                            cPosition.x = cameraBounds[i].transform.position.x - cameraBounds[i].transform.localScale.x / 2;
+                        break;
+                    default: break;
+                }
+            }
+
             cPosition.z = -3;
 
             camera.transform.position = cPosition;

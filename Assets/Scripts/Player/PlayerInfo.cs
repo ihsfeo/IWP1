@@ -85,6 +85,13 @@ public class PlayerInfo : MonoBehaviour
             CurrentSwordSwing = SwordCount;
     }
 
+    public ItemBase.WeaponType GetWeaponType()
+    {
+        if (WeaponList[CurrentWeapon] != null)
+            return WeaponList[CurrentWeapon].GetWeaponType();
+        return ItemBase.WeaponType.Total;
+    }
+
     public void TakeDamage(ItemBase.TypeOfDamage Element, int damage, bool AdditionalHit = false)
     {
         // Damage Calculation

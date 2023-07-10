@@ -11,8 +11,11 @@ public class Equipment : ItemBase
     private void Awake()
     {
         Level = 1;
+        itemID = EquipmentValues.itemID;
+        Rarity = EquipmentValues.itemRarity;
         ItemName = EquipmentValues.Name;
-        Stats.Add(new CStats(EquipmentValues.PrimaryStat, EquipmentValues.PrimaryValue));
+        for (int i = 0; i < EquipmentValues.Stats.Count; i++)
+            Stats.Add(new CStats(EquipmentValues.Stats[i], EquipmentValues.StatValues[i]));
     }
 
     public List<CStats> GetStats()

@@ -135,4 +135,36 @@ public class MapManager : MonoBehaviour
 
         return false;
     }
+
+    // Direction of path
+    // This Room
+    public void MakeRoom(RoomPart roomPart, Room.Direction direction)
+    {
+        // Make new Room that fits
+        Room NRoom = GetRoom(roomPart, direction);
+
+        // Making of the new room
+        for (int i = 0; i < NRoom.GetRoomPart().Count; i++)
+        {
+            for (int j = 0; j < NRoom.GetRoomPart()[i].Entrances.Count; i++)
+            {
+                MakeRoom(NRoom.GetRoomPart()[i], NRoom.GetRoomPart()[i].Entrances[j].GetDirection());
+            }
+        }
+    }
+
+
+    public Room GetRoom(RoomPart roomPart, Room.Direction direction)
+    {
+        // Check the corresponding surrounds
+        // Get rid of rooms that cant fit
+        // Select a room from the remains
+
+        return new Room();
+    }
+
+    public void AStar()
+    {
+        // do in the library later
+    }
 }

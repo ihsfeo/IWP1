@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "item.asset", menuName = "Item/Equipment")]
-public class EquipmentSO : ScriptableObject
+[CreateAssetMenu(fileName = "item.asset", menuName = "Item/Weapon")]
+public class WeaponSO : ScriptableObject
 {
     public string Name;
 

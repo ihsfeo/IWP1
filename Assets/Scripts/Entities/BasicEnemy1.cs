@@ -4,16 +4,6 @@ using UnityEngine;
 
 public class BasicEnemy1 : EnemyBase
 {
-    enum EnemyState
-    {
-        Idle,
-        Attacking,
-        Dead,
-        Chase
-    }
-
-    EnemyState eEnemyState;
-
     // Starts from N clockwise
     List<float> SteeringDesire = new List<float>();
     List<GameObject> CollisionObjects = new List<GameObject>();
@@ -193,6 +183,7 @@ public class BasicEnemy1 : EnemyBase
 
     private void Awake()
     {
+        status = GetComponent<Status>();
         status.InitStats();
         ShieldMax = 100;
         Shield = ShieldMax;
@@ -307,6 +298,7 @@ public class BasicEnemy1 : EnemyBase
                     case 5: // Down down Right
                         break;
                     case 6: // Down
+                        // Go to the side which is not obstructured
                         break;
                     case 7: // Down Down Left
                         GoLeft();

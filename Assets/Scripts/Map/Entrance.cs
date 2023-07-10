@@ -6,9 +6,14 @@ public class Entrance : MonoBehaviour
 {
     bool Usable = true;
     Vector3 Position;
-    Entrance otherEntrance;
+    [SerializeField] Entrance otherEntrance;
     RoomPart roomPart;
     [SerializeField] Room.Direction direction;
+
+    private void Awake()
+    {
+        init();
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -18,7 +23,15 @@ public class Entrance : MonoBehaviour
             if (otherEntrance.IsUsable() && Usable)
             {
                 // Make other room appear
+                {
+                    roomPart.room.Exit();
+                    otherEntrance.roomPart.room.Enter();
+                }
                 // teleport player to other entrance
+                {
+                    collision.transform.position = otherEntrance.GetPosition();
+                    collision.GetComponent<PlayerMovement>().SpeedZero();
+                }
 
             }    
         }
@@ -43,5 +56,10 @@ public class Entrance : MonoBehaviour
     public void ConnectEntrance(Entrance entrance)
     {
         otherEntrance = entrance;
+    }
+
+    public Vector3 GetPosition()
+    {
+        return Position;
     }
 }

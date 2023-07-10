@@ -111,11 +111,11 @@ public class ItemBase : MonoBehaviour
     }
 
     // Item Stuff
-    public string ItemName;
+    public string ItemName = "Default";
     public ItemID itemID;
     public ItemRarity Rarity;
-    public int MaxCount;
-    public int Count;
+    public int MaxCount = 1;
+    public int Count = 1;
     public TypeOfItems ItemType;
 
     // Weapon Stuff
@@ -142,5 +142,10 @@ public class ItemBase : MonoBehaviour
     public virtual bool HitEntity(GameObject target)
     {
         return false;
+    }
+
+    public WeaponType GetWeaponType()
+    {
+        return eWeaponType;
     }
 }

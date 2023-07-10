@@ -4,16 +4,6 @@ using UnityEngine;
 
 public class FlyingEnemy1 : EnemyBase
 {
-    enum EnemyState
-    {
-        Idle,
-        Attacking,
-        Dead,
-        Chase
-    }
-
-    EnemyState eEnemyState;
-
     // Starts from N clockwise
     List<float> SteeringDesire = new List<float>();
     List<GameObject> CollisionObjects = new List<GameObject>();
@@ -203,6 +193,7 @@ public class FlyingEnemy1 : EnemyBase
 
     private void Awake()
     {
+        status = GetComponent<Status>();
         status.InitStats();
         ShieldMax = 100;
         Shield = ShieldMax;

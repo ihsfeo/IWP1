@@ -4,16 +4,35 @@ using UnityEngine;
 
 public class WeaponIdle : StateMachineBehaviour
 {
-    //GameObject player;
+    PlayerInfo player;
+
     //OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        //player = GameObject.FindGameObjectWithTag("Player");
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerInfo>();
     }
 
     //OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        animator.SetBool("IsSword", false);
+        animator.SetBool("IsSpear", false);
+        animator.SetBool("IsBow", false);
+        switch (player.GetWeaponType())
+        {
+            case ItemBase.WeaponType.Sword:
+                animator.SetBool("IsSword", true);
+                break;
+            case ItemBase.WeaponType.Spear:
+                animator.SetBool("IsSpear", true);
+                break;
+            case ItemBase.WeaponType.Bow:
+                animator.SetBool("IsBow", true);
+                break;
+            case ItemBase.WeaponType.Total:
+            default:
+                break;
+        }
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             animator.SetBool("LeftClick", true);

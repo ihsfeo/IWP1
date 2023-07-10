@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RoomPart : Room
+public class RoomPart : MonoBehaviour
 {
-    public List<Direction> SameRoom = new List<Direction>();
+    public List<Room.Direction> SameRoom = new List<Room.Direction>();
     public List<Entrance> Entrances = new List<Entrance>();
-    Room room;
+    public Room room;
 
     public void init()
     {

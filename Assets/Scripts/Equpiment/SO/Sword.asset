@@ -9,11 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7953ba9fedf6bb240813aeaaedbffbf3, type: 3}
-  m_Name: Helmet
+  m_Script: {fileID: 11500000, guid: 027b816e26c3c59468e95f8f5aa92c29, type: 3}
+  m_Name: Sword
   m_EditorClassIdentifier: 
-  Name: Helmet
-  itemID: 1
-  Stats: 04000000
+  Name: Sword
+  itemID: 0
+  itemRarity: 0
+  Stats: 00000000
   StatValues:
-  - 2
+  - 5
