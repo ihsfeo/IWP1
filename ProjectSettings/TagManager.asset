@@ -11,6 +11,8 @@ TagManager:
   - Enemy
   - Lava
   - CameraBounds
+  - iSlot
+  - iEquip
   layers:
   - Default
   - TransparentFX

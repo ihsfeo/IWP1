@@ -111,7 +111,8 @@ public class ItemBase : MonoBehaviour
     }
 
     // Item Stuff
-    public string ItemName = "Default";
+    public string ItemName = "DefaultItemName";
+    public string Description = "DefafultDescription";
     public ItemID itemID;
     public ItemRarity Rarity;
     public int MaxCount = 1;

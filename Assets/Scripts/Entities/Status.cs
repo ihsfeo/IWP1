@@ -49,31 +49,32 @@ public class Status : MonoBehaviour
 
         for (int i = 0; i < stats.Count; i++)
         {
-            switch (stats[i].Type)
-            {
-                case CStats.Stats.AttackFlat:
-                case CStats.Stats.AttackPercentage:
-                case CStats.Stats.MaxHealth:
-                case CStats.Stats.IncreasedAfflictions:
-                case CStats.Stats.DefenceFlat:
-                case CStats.Stats.DefencePercentage:
-                case CStats.Stats.FireDefencePercentage:
-                case CStats.Stats.IceDefencePercentage:
-                case CStats.Stats.NaturalDefencePercentage:
-                case CStats.Stats.LightningDefencePercentage:
-                case CStats.Stats.PhysicalDefencePercentage:
-                case CStats.Stats.DarkDefencePercentage:
-                case CStats.Stats.LightDefencePercentage:
-                case CStats.Stats.ResistancePercentage:
-                case CStats.Stats.FireResistancePercentage:
-                case CStats.Stats.IceResistancePercentage:
-                case CStats.Stats.NaturalResistancePercentage:
-                case CStats.Stats.LightningResistancePercentage:
-                case CStats.Stats.PhysicalResistancePercentage:
-                case CStats.Stats.DarkResistancePercentage:
-                case CStats.Stats.LightResistancePercentage:
-                default: return;
-            }
+            cStats[(int)stats[i].Type].Value += stats[i].Value;
+            //switch (stats[i].Type)
+            //{
+            //    case CStats.Stats.AttackFlat:
+            //    case CStats.Stats.AttackPercentage:
+            //    case CStats.Stats.MaxHealth:
+            //    case CStats.Stats.IncreasedAfflictions:
+            //    case CStats.Stats.DefenceFlat:
+            //    case CStats.Stats.DefencePercentage:
+            //    case CStats.Stats.FireDefencePercentage:
+            //    case CStats.Stats.IceDefencePercentage:
+            //    case CStats.Stats.NaturalDefencePercentage:
+            //    case CStats.Stats.LightningDefencePercentage:
+            //    case CStats.Stats.PhysicalDefencePercentage:
+            //    case CStats.Stats.DarkDefencePercentage:
+            //    case CStats.Stats.LightDefencePercentage:
+            //    case CStats.Stats.ResistancePercentage:
+            //    case CStats.Stats.FireResistancePercentage:
+            //    case CStats.Stats.IceResistancePercentage:
+            //    case CStats.Stats.NaturalResistancePercentage:
+            //    case CStats.Stats.LightningResistancePercentage:
+            //    case CStats.Stats.PhysicalResistancePercentage:
+            //    case CStats.Stats.DarkResistancePercentage:
+            //    case CStats.Stats.LightResistancePercentage:
+            //    default: return;
+            //}
         }
     }
 

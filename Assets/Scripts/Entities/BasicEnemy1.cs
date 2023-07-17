@@ -453,5 +453,15 @@ public class BasicEnemy1 : EnemyBase
         // Reset Intent
         dotClear();
     }
-    
+
+    public override void Reset()
+    {
+        status.Health = (int)status.GetStat(CStats.Stats.MaxHealth);
+        eEnemyState = EnemyState.Idle;
+
+        Right = 0;
+        Up = 0;
+        TargetInSight = false;
+        TargetSpotted = 0;
+    }
 }

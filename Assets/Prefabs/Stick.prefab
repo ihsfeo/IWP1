@@ -162,11 +162,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ItemName: Sword
+  Description: A simple sti- I mean Sword.
   itemID: 0
   Rarity: 0
   MaxCount: 1
   Count: 1
-  ItemType: 0
+  ItemType: 4
   playerInfo: {fileID: 0}
 --- !u!222 &875953688470680552
 CanvasRenderer:

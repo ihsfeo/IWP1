@@ -66,7 +66,7 @@ public class PlayerMovement : MonoBehaviour
     {
         JumpCountMax = 3;
         JumpCount = 0;
-        TerminalVelocity = 1;
+        TerminalVelocity = 2;
 
         DashDirection = Direction.Left;
         DashCD = 0;
@@ -79,6 +79,8 @@ public class PlayerMovement : MonoBehaviour
     {
         Right = 0;
         Up = 0;
+        //camera.transform.position = transform.position;
+        //UpdateCamera(camera.transform.position);
     }
 
     // Update is called once per frame
@@ -107,7 +109,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 if (Input.GetKeyDown(KeyCode.Space) && JumpCount < JumpCountMax)
                 {
-                    Up = 12 * Time.deltaTime;
+                    Up = 0.2f;
                     JumpCount++;
                 }
             }
@@ -420,51 +422,56 @@ public class PlayerMovement : MonoBehaviour
                 cPosition = cPosition + (-cPosition + transform.position) / 80;
             }
 
-            // Clamp
-            if (cPosition.y - transform.position.y > 6)
-            {
-                cPosition += new Vector3(0, 6 + transform.position.y - cPosition.y, 0);
-            }
-            else if (cPosition.y - transform.position.y < -6)
-            {
-                cPosition += new Vector3(0, -6 + transform.position.y - cPosition.y, 0);
-            }
-            if (cPosition.x - transform.position.x > 10)
-            {
-                cPosition += new Vector3(10 + transform.position.x - cPosition.x, 0, 0);
-            }
-            else if (cPosition.x - transform.position.x < -10)
-            {
-                cPosition += new Vector3(-10 + transform.position.x - cPosition.x, 0, 0);
-            }
-
-            for (int i = 0; i < cameraBounds.Count; i++)
-            {
-                switch (cameraBounds[i].direction)
-                {
-                    case Room.Direction.Up:
-                        if (cPosition.y >= cameraBounds[i].transform.position.y - cameraBounds[i].transform.localScale.y / 2)
-                            cPosition.y = cameraBounds[i].transform.position.y - cameraBounds[i].transform.localScale.y / 2;
-                        break;
-                    case Room.Direction.Down:
-                        if (cPosition.y <= cameraBounds[i].transform.position.y + cameraBounds[i].transform.localScale.y / 2)
-                            cPosition.y = cameraBounds[i].transform.position.y + cameraBounds[i].transform.localScale.y / 2;
-                        break;
-                    case Room.Direction.Left:
-                        if (cPosition.x <= cameraBounds[i].transform.position.x + cameraBounds[i].transform.localScale.x / 2)
-                            cPosition.x = cameraBounds[i].transform.position.x + cameraBounds[i].transform.localScale.x / 2;
-                        break;
-                    case Room.Direction.Right:
-                        if (cPosition.x >= cameraBounds[i].transform.position.x - cameraBounds[i].transform.localScale.x / 2)
-                            cPosition.x = cameraBounds[i].transform.position.x - cameraBounds[i].transform.localScale.x / 2;
-                        break;
-                    default: break;
-                }
-            }
-
-            cPosition.z = -3;
-
-            camera.transform.position = cPosition;
+            UpdateCamera(cPosition);
         }
+    }
+
+    void UpdateCamera(Vector3 cPosition)
+    {
+        // Clamp
+        if (cPosition.y - transform.position.y > 6)
+        {
+            cPosition += new Vector3(0, 6 + transform.position.y - cPosition.y, 0);
+        }
+        else if (cPosition.y - transform.position.y < -6)
+        {
+            cPosition += new Vector3(0, -6 + transform.position.y - cPosition.y, 0);
+        }
+        if (cPosition.x - transform.position.x > 10)
+        {
+            cPosition += new Vector3(10 + transform.position.x - cPosition.x, 0, 0);
+        }
+        else if (cPosition.x - transform.position.x < -10)
+        {
+            cPosition += new Vector3(-10 + transform.position.x - cPosition.x, 0, 0);
+        }
+
+        for (int i = 0; i < cameraBounds.Count; i++)
+        {
+            switch (cameraBounds[i].direction)
+            {
+                case Room.Direction.Up:
+                    if (cPosition.y >= cameraBounds[i].transform.position.y - cameraBounds[i].transform.localScale.y / 2)
+                        cPosition.y = cameraBounds[i].transform.position.y - cameraBounds[i].transform.localScale.y / 2;
+                    break;
+                case Room.Direction.Down:
+                    if (cPosition.y <= cameraBounds[i].transform.position.y + cameraBounds[i].transform.localScale.y / 2)
+                        cPosition.y = cameraBounds[i].transform.position.y + cameraBounds[i].transform.localScale.y / 2;
+                    break;
+                case Room.Direction.Left:
+                    if (cPosition.x <= cameraBounds[i].transform.position.x + cameraBounds[i].transform.localScale.x / 2)
+                        cPosition.x = cameraBounds[i].transform.position.x + cameraBounds[i].transform.localScale.x / 2;
+                    break;
+                case Room.Direction.Right:
+                    if (cPosition.x >= cameraBounds[i].transform.position.x - cameraBounds[i].transform.localScale.x / 2)
+                        cPosition.x = cameraBounds[i].transform.position.x - cameraBounds[i].transform.localScale.x / 2;
+                    break;
+                default: break;
+            }
+        }
+
+        cPosition.z = -3;
+
+        camera.transform.position = cPosition;
     }
 }

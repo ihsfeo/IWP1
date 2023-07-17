@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerInfo : MonoBehaviour
 {
@@ -17,10 +18,9 @@ public class PlayerInfo : MonoBehaviour
     [SerializeField] InventoryManager inventoryManager;
     [SerializeField] PlayerMovement playerMovement;
     [SerializeField] Status status;
-    [SerializeField] ItemBase tempWeapon, tempweapon;
+    [SerializeField] CurrentWeaponDisplay weaponDisplay;
 
     List<ItemBase> WeaponList = new List<ItemBase>();
-    List<ItemBase> EquipmentList = new List<ItemBase>();
 
     public int Gold;
 
@@ -33,7 +33,7 @@ public class PlayerInfo : MonoBehaviour
 
     float LavaTime = 0;
 
-    void UpdateStatus()
+    public void UpdateStatus()
     {
         // Take into account
         // 1. Current Weapon Stats
@@ -45,16 +45,66 @@ public class PlayerInfo : MonoBehaviour
         // 1. Switching active weapon
         // 2. Swtiching current equipment
         // 3. Upgrades stats
-        if (WeaponList[CurrentWeapon])
+        for (int i = 0; i < transform.GetChild(1).childCount; i++)
         {
-
+            Destroy(transform.GetChild(1).GetChild(0).gameObject);
+        }
+        if (WeaponList[CurrentWeapon] && inventoryManager.EquippedItems[4 + CurrentWeapon])
+        {
+           for (int i = 0; i < 3; i++)
+            {
+                if (inventoryManager.EquippedItems[4 + i])
+                {
+                    WeaponList[i] = Instantiate(inventoryManager.EquippedItems[4 + i], transform.GetChild(1));
+                    WeaponList[i].transform.localPosition = new Vector3(1, 0, 0);
+                    WeaponList[i].transform.localScale = new Vector3(WeaponList[i].transform.localScale.x / 100, WeaponList[i].transform.localScale.y / 100, 1);
+                    WeaponList[i].GetComponent<SpriteRenderer>().enabled = true;
+                    WeaponList[i].GetComponent<Image>().enabled = false;
+                    WeaponList[i].GetComponent<BasicSword>().enabled = true;
+                    WeaponList[i].GetComponent<BoxCollider2D>().enabled = true;
+                    WeaponList[i].gameObject.SetActive(false);
+                }
+                else
+                    WeaponList[i] = null;
+            }
+            // Get Stats of current weapon
+            WeaponList[CurrentWeapon].gameObject.SetActive(true);
+        }
+        else
+        {
+            bool WeaponFound = false;
+            for (int i = 0; i < 3; i++)
+            {
+                if (inventoryManager.EquippedItems[4 + i])
+                {
+                    WeaponList[i] = Instantiate(inventoryManager.EquippedItems[4 + i], transform.GetChild(1));
+                    WeaponList[i].transform.localPosition = new Vector3(1, 0, 0);
+                    WeaponList[i].transform.localScale = new Vector3(WeaponList[i].transform.localScale.x / 100, WeaponList[i].transform.localScale.y / 100, 1);
+                    WeaponList[i].GetComponent<SpriteRenderer>().enabled = true;
+                    WeaponList[i].GetComponent<Image>().enabled = false;
+                    WeaponList[i].GetComponent<BasicSword>().enabled = true;
+                    WeaponList[i].GetComponent<BoxCollider2D>().enabled = true;
+                    WeaponList[i].gameObject.SetActive(false);
+                }
+                else
+                    WeaponList[i] = null;
+                if (inventoryManager.EquippedItems[4 + i] != null && !WeaponFound)
+                {
+                    WeaponFound = true;
+                    CurrentWeapon = i;
+                    WeaponList[i].gameObject.SetActive(true);
+                    // Get the stats of this weapon
+                }
+            }
         }
 
-        for (int i = 0; i < EquipmentList.Count; i++)
+        for (int i = 0; i < 4; i++)
         {
-           status.IncludeStatsOf( EquipmentList[i] );
+            if (inventoryManager.EquippedItems[i])
+               status.IncludeStatsOf( inventoryManager.EquippedItems[i] );
         }
 
+        weaponDisplay.UpdateUI(WeaponList, CurrentWeapon);
     }
 
     public bool CanPickup(ItemBase item)
@@ -87,9 +137,14 @@ public class PlayerInfo : MonoBehaviour
 
     public ItemBase.WeaponType GetWeaponType()
     {
-        if (WeaponList[CurrentWeapon] != null)
+        try
+        {
             return WeaponList[CurrentWeapon].GetWeaponType();
-        return ItemBase.WeaponType.Total;
+        }
+        catch
+        {
+            return ItemBase.WeaponType.Total;
+        }
     }
 
     public void TakeDamage(ItemBase.TypeOfDamage Element, int damage, bool AdditionalHit = false)
@@ -206,16 +261,12 @@ public class PlayerInfo : MonoBehaviour
         CurrentWeapon = 0;
         healthBar.UpdateHealthBar((int)status.GetStat(CStats.Stats.MaxHealth), status.Health);
 
-        inventoryManager.init();
-
         for (int i = 0; i < 3; i++)
         {
             WeaponList.Add(null);
         }
 
-        EquipWeapon(0, tempWeapon);
-        EquipWeapon(1, tempweapon);
-        SwitchWeapon(0);
+        inventoryManager.init();
     }
 
     private void Reset()
@@ -230,14 +281,14 @@ public class PlayerInfo : MonoBehaviour
 
     void SwitchWeapon(int slot)
     {
-        if (WeaponList[slot] == null)
-            return;
-        WeaponList[CurrentWeapon].gameObject.SetActive(false);
-        // instantiate new slot weapon
-        // reset old weapon hits
-        CurrentWeapon = slot;
-        WeaponList[CurrentWeapon].gameObject.SetActive(true);
-        UpdateStatus();
+        try
+        {
+            WeaponList[slot].gameObject.SetActive(true);
+            WeaponList[CurrentWeapon].gameObject.SetActive(false);
+            CurrentWeapon = slot;
+            UpdateStatus();
+        }
+        catch { }
     }
 
     void UseActive()
@@ -325,6 +376,7 @@ public class PlayerInfo : MonoBehaviour
                     CurrentSceneState = SceneState.Game;
                     inventoryManager.gameObject.SetActive(false);
                 }
+                // Hover to view info, not when holding item
                 break;
             case SceneState.Craft:
                 if (Input.GetKeyDown(KeyCode.Escape))
