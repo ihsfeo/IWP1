@@ -41,9 +41,11 @@ public class Status : MonoBehaviour
             case ItemBase.TypeOfItems.Chestplate:
             case ItemBase.TypeOfItems.Legging:
             case ItemBase.TypeOfItems.Shoe:
-                stats = item.GetComponent<Equipment>().GetStats();
+                stats = item.cStats;
                 break;
             case ItemBase.TypeOfItems.Weapon:
+                stats = item.cStats;
+                break;
             default: return;
         }
 

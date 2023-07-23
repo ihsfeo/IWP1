@@ -13,8 +13,12 @@ MonoBehaviour:
   m_Name: Sword
   m_EditorClassIdentifier: 
   Name: Sword
+  Description: A simple sti- I mean Sword.
+  BaseDamage: 10
   itemID: 0
   itemRarity: 0
+  typeOfDamage: 4
+  weaponType: 0
   Stats: 00000000
   StatValues:
   - 5

@@ -6,6 +6,7 @@ using UnityEngine;
 public class EquipmentSO : ScriptableObject
 {
     public string Name;
+    public string Description;
 
     public ItemBase.ItemID itemID;
     public ItemBase.ItemRarity itemRarity;

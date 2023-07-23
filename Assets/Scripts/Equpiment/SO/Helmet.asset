@@ -13,7 +13,9 @@ MonoBehaviour:
   m_Name: Helmet
   m_EditorClassIdentifier: 
   Name: Helmet
+  Description: Hemisphere made out of string
   itemID: 1
+  itemRarity: 0
   Stats: 04000000
   StatValues:
   - 2

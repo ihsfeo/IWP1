@@ -1,16 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class HoverDescription : MonoBehaviour
+public class HoverDescription : MonoBehaviour , IPointerEnterHandler, IPointerExitHandler
 {
-    public GameObject Display;
+    public ItemDescription Display;
 
-    private void OnMouseEnter()
+    public void OnPointerEnter(PointerEventData eventData)
     {
         // Getting item
         ClickAndDrag temp = GetComponent<ClickAndDrag>();
-        ItemBase item = temp.inventoryManager.Inventory[temp.Slot];
+        ItemBase item = null;
+        if (temp.gameObject.tag == "iSlot")
+            item = temp.inventoryManager.Inventory[temp.Slot];
+        else if (temp.gameObject.tag == "iEquip")
+            item = temp.inventoryManager.EquippedItems[temp.Slot];
+        try
+        {
+            item.gameObject.SetActive(true);
+        }
+        catch
+        {
+            return;
+        }
 
         /*
         
@@ -24,18 +37,19 @@ public class HoverDescription : MonoBehaviour
         Equipment* Weapon* Extra Stats
          
          */
+        Display.Show(item);
+        // Change position
+        if (transform.position.x < 960)
+            this.Display.transform.position = new Vector3(transform.position.x + 500, 540, 0);
+        else
+            this.Display.transform.position = new Vector3(transform.position.x - 500, 540, 0);
 
 
-        Display.SetActive(true);
+        Display.gameObject.SetActive(true);
     }
 
-    private void OnMouseOver()
+    public void OnPointerExit(PointerEventData eventData)
     {
-        // Change position if you want
-    }
-
-    private void OnMouseExit()
-    {
-        Display.SetActive(false);
+        Display.gameObject.SetActive(false);
     }
 }

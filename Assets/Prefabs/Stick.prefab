@@ -169,6 +169,7 @@ MonoBehaviour:
   Count: 1
   ItemType: 4
   playerInfo: {fileID: 0}
+  weaponSO: {fileID: 11400000, guid: f5d6c31135c94ec4e9a48c150de45b0f, type: 2}
 --- !u!222 &875953688470680552
 CanvasRenderer:
   m_ObjectHideFlags: 0

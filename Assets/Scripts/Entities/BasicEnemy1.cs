@@ -7,6 +7,7 @@ public class BasicEnemy1 : EnemyBase
     // Starts from N clockwise
     List<float> SteeringDesire = new List<float>();
     List<GameObject> CollisionObjects = new List<GameObject>();
+    List<GameObject> DetectedObjects = new List<GameObject>();
 
     [SerializeField] ItemManager itemManager;
 
@@ -131,21 +132,21 @@ public class BasicEnemy1 : EnemyBase
 
     bool SeePlayer()
     {
-        for (int i = 0; i < CollisionObjects.Count; i++)
+        for (int i = 0; i < DetectedObjects.Count; i++)
         {
-            if (CollisionObjects[i].tag == "Player")
+            if (DetectedObjects[i].tag == "Player")
             {
                 gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
                 RaycastHit2D hit2D;
 
                 // While does not hit player, raycast 5 times, 4 corners and middle
-                hit2D = Physics2D.Raycast(transform.position, CollisionObjects[i].transform.position - transform.position, 10);
+                hit2D = Physics2D.Raycast(transform.position, DetectedObjects[i].transform.position - transform.position, 10);
                 //Debug.DrawRay(transform.position, CollisionObjects[i].transform.position - transform.position, Color.red, 1.0f);
                 gameObject.layer = LayerMask.NameToLayer("Default");
                 if (hit2D.collider == null || hit2D.collider.gameObject.tag != "Player")
                     return false;
 
-                dotIntent(CollisionObjects[i].transform.position - new Vector3(hit2D.point.x, hit2D.point.y, 0), 5);
+                dotIntent(DetectedObjects[i].transform.position - new Vector3(hit2D.point.x, hit2D.point.y, 0), 5);
                 TargetSpotted = 3;
                 TargetInSight = true;
                 TargetLocation = new Vector3(hit2D.point.x, hit2D.point.y, 0);
@@ -211,7 +212,18 @@ public class BasicEnemy1 : EnemyBase
 
     private void Update()
     {
+        DetectedObjects = transform.GetChild(0).GetComponent<DetectionRange>().DetectedObjects;
         Vector3 oldPosition = transform.position;
+
+        if (DamageTime > 0)
+        {
+            DamageTime -= Time.deltaTime;
+            if (DamageTime <= 0)
+            {
+                DamageTime = 0;
+                GetComponent<SpriteRenderer>().color = new Color(255, 255, 255);
+            }
+        }
 
         if (SeePlayer())
         {
@@ -269,7 +281,7 @@ public class BasicEnemy1 : EnemyBase
 
                     DroppedItem temp = GameObject.Instantiate(itemManager.droppedItem).GetComponent<DroppedItem>();
                     temp.transform.position = transform.position;
-                    temp.Init(ItemBase.ItemID.Sword, 1, itemManager);
+                    temp.Init(ItemBase.ItemID.WeaponFragment1, Random.Range(2,5), itemManager);
                     Destroy(gameObject);
                     break;
             }

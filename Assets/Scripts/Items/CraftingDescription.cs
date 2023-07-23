@@ -35,13 +35,6 @@ public class CraftingDescription : MonoBehaviour
         }
 
         // Description
-        switch (item.itemID)
-        {
-            case ItemBase.ItemID.Sword:
-                MainDescription.text = "This is a Sword.";
-                break;
-            case ItemBase.ItemID.Helmet:
-            default: break;
-        }
+        MainDescription.text = item.Description;
     }
 }

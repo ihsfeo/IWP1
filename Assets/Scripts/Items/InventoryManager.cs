@@ -8,6 +8,7 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] ItemManager itemManager;
     [SerializeField] List<GameObject> InventoryRows = new List<GameObject>();
     [SerializeField] GameObject Equips;
+    [SerializeField] ItemDescription PopUp;
 
     public List<ItemBase> Inventory = new List<ItemBase>();
     public List<ItemBase> EquippedItems = new List<ItemBase>();
@@ -38,15 +39,14 @@ public class InventoryManager : MonoBehaviour
             ItemBase temp = Inventory[i];
             if (temp == null)
             {
-                Inventory[i] = Item;
+                Inventory[i] = Instantiate(Item, InventorySlot[i].transform);
+                Inventory[i].Init();
                 Inventory[i].Count = AmountToAdd;
 
-                Instantiate(Inventory[i].gameObject, InventorySlot[i].transform);
-
-                InventorySlot[i].transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
-                InventorySlot[i].transform.GetChild(0).GetComponent<Image>().enabled = true;
-                InventorySlot[i].transform.GetChild(0).gameObject.SetActive(true);
-                InventorySlot[i].transform.GetChild(0).localScale = new Vector3(Item.transform.localScale.x * 100, Item.transform.localScale.y * 100, 1);
+                Inventory[i].transform.GetComponent<SpriteRenderer>().enabled = false;
+                Inventory[i].transform.GetComponent<Image>().enabled = true;
+                Inventory[i].transform.gameObject.SetActive(true);
+                Inventory[i].transform.localScale = new Vector3(Item.transform.localScale.x * 100, Item.transform.localScale.y * 100, 1);
 
                 if (AmountToAdd > Item.MaxCount)
                 {
@@ -103,6 +103,32 @@ public class InventoryManager : MonoBehaviour
         return 0;
     }
 
+    public void Remove(ItemBase.ItemID ID, int Count)
+    {
+        int AmountRemoved = 0;
+        for (int i = 0; i < Inventory.Count; i++)
+        {
+            if (!Inventory[i])
+                continue;
+            if (Inventory[i].itemID == ID)
+            {
+                if (Inventory[i].Count <= Count)
+                {
+                    AmountRemoved += Inventory[i].Count;
+                    DestroyImmediate(Inventory[i].gameObject);
+                }
+                else
+                {
+                    Inventory[i].Count -= Count - AmountRemoved;
+                    AmountRemoved = Count;
+                    break;
+                }
+                if (AmountRemoved == Count)
+                    break;
+            }
+        }
+    }
+
     public bool HasMaterials(ItemBase Material1, int count1, ItemBase Material2 = null, int count2 = 0, ItemBase Material3 = null, int count3 = 0)
     {
         if (!HasMaterial(Material1, count1))
@@ -120,6 +146,8 @@ public class InventoryManager : MonoBehaviour
         int Check_Count = 0;
         for (int i = 0; i < Inventory.Count; i++)
         {
+            if (!Inventory[i])
+                continue;
             if (Inventory[i].itemID == Material.itemID)
                 Check_Count += Inventory[i].Count;
         }
@@ -127,6 +155,19 @@ public class InventoryManager : MonoBehaviour
             return true;
 
         return false;
+    }
+
+    public int GetMaterials(ItemBase.ItemID ID)
+    {
+        int Check_Count = 0;
+        for (int i = 0; i < Inventory.Count; i++)
+        {
+            if (!Inventory[i])
+                continue;
+            if (Inventory[i].itemID == ID)
+                Check_Count += Inventory[i].Count;
+        }
+        return Check_Count;
     }
 
     void Equip(int slot)
@@ -165,6 +206,11 @@ public class InventoryManager : MonoBehaviour
                 InventorySlot[i * 6 + j].gameObject.tag = "iSlot";
 
                 InventorySlot[i * 6 + j].AddComponent<HoverDescription>();
+                InventorySlot[i * 6 + j].GetComponent<HoverDescription>().Display = PopUp;
+
+                InventorySlot[i * 6 + j].AddComponent<BoxCollider2D>();
+                InventorySlot[i * 6 + j].GetComponent<BoxCollider2D>().isTrigger = true;
+                InventorySlot[i * 6 + j].GetComponent<BoxCollider2D>().size = new Vector2(100, 100);
                 Inventory.Add(null);
             }
         }
@@ -180,6 +226,11 @@ public class InventoryManager : MonoBehaviour
             slot.tag = "iEquip";
 
             slot.AddComponent<HoverDescription>();
+            slot.GetComponent<HoverDescription>().Display = PopUp;
+
+            slot.AddComponent<BoxCollider2D>();
+            slot.GetComponent<BoxCollider2D>().isTrigger = true;
+            slot.GetComponent<BoxCollider2D>().size = new Vector2(100, 100);
         }
         // Init Equipped List
         for (int i = 0; i < 7; i++)
@@ -187,10 +238,19 @@ public class InventoryManager : MonoBehaviour
             EquippedItems.Add(null);
         }
 
-        Inventory[0] = Instantiate(itemManager.GetItem(ItemBase.ItemID.Sword), InventorySlot[0].transform).GetComponent<ItemBase>();
-        Inventory[0].GetComponent<Image>().enabled = true;
-        Inventory[0].GetComponent<SpriteRenderer>().enabled = false;
-        Inventory[0].transform.localScale = new Vector3(Inventory[0].transform.localScale.x * 100, Inventory[0].transform.localScale.y * 100, 1);
+        EquippedItems[4] = Instantiate(itemManager.GetItem(ItemBase.ItemID.Sword), EquippedSlot[4].transform).GetComponent<ItemBase>();
+        EquippedItems[4].Init();
+        EquippedItems[4].GetComponent<Image>().enabled = true;
+        EquippedItems[4].GetComponent<SpriteRenderer>().enabled = false;
+        EquippedItems[4].transform.localScale = new Vector3(EquippedItems[4].transform.localScale.x * 100, EquippedItems[4].transform.localScale.y * 100, 1);
+
+        EquippedItems[0] = Instantiate(itemManager.GetItem(ItemBase.ItemID.Helmet), EquippedSlot[0].transform).GetComponent<ItemBase>();
+        EquippedItems[0].Init();
+        EquippedItems[0].GetComponent<Image>().enabled = true;
+        EquippedItems[0].GetComponent<SpriteRenderer>().enabled = false;
+        EquippedItems[0].transform.localScale = new Vector3(EquippedItems[0].transform.localScale.x * 100, EquippedItems[0].transform.localScale.y * 100, 1);
+
+        PopUp.Init();
         player.UpdateStatus();
     }
 
@@ -199,39 +259,41 @@ public class InventoryManager : MonoBehaviour
         GameObject item1, item2;
         if (InventorySlot[Slot1].transform.childCount > 0)
         {
-            item1 = InventorySlot[Slot1].transform.GetChild(0).gameObject;
+            //item1 = InventorySlot[Slot1].transform.GetChild(0).gameObject;
             Destroy(InventorySlot[Slot1].transform.GetChild(0).gameObject);
         }
         else item1 = null;
         if (InventorySlot[Slot2].transform.childCount > 0)
         {
-            item2 = InventorySlot[Slot2].transform.GetChild(0).gameObject;
+            //item2 = InventorySlot[Slot2].transform.GetChild(0).gameObject;
             Destroy(InventorySlot[Slot2].transform.GetChild(0).gameObject);
         }
         else item2 = null;
 
-        if (item1)
-        {
-            GameObject tempObj = Instantiate(item1, InventorySlot[Slot2].transform);
-            tempObj.GetComponent<Image>().enabled = true;
-        }
-        if (item2)
-        {
-            GameObject tempObj = Instantiate(item2, InventorySlot[Slot1].transform);
-            tempObj.GetComponent<Image>().enabled = true;
-        }
+        //if (item1)
+        //{
+        //    GameObject tempObj = Instantiate(item1, InventorySlot[Slot2].transform);
+        //    tempObj.GetComponent<Image>().enabled = true;
+        //}
+        //if (item2)
+        //{
+        //    GameObject tempObj = Instantiate(item2, InventorySlot[Slot1].transform);
+        //    tempObj.GetComponent<Image>().enabled = true;
+        //}
 
         ItemBase temp = null;
         if (Inventory[Slot1])
         {
             temp = Instantiate(Inventory[Slot1]);
             temp.name = Inventory[Slot1].name;
+            temp.GetComponent<Image>().enabled = true;
             Destroy(Inventory[Slot1]);
         }
         if (Inventory[Slot2])
         {
             Inventory[Slot1] = Instantiate(Inventory[Slot2]);
             Inventory[Slot1].name = Inventory[Slot2].name;
+            Inventory[Slot1].GetComponent<Image>().enabled = true;
             Destroy(Inventory[Slot2]);
         }
         else Inventory[Slot1] = null;
@@ -247,39 +309,41 @@ public class InventoryManager : MonoBehaviour
 
         if (EquippedSlot[Slot1].transform.childCount > 0)
         {
-            item1 = EquippedSlot[Slot1].transform.GetChild(0).gameObject;
+            //item1 = EquippedSlot[Slot1].transform.GetChild(0).gameObject;
             Destroy(EquippedSlot[Slot1].transform.GetChild(0).gameObject);
         }
         else item1 = null;
         if (EquippedSlot[Slot2].transform.childCount > 0)
         {
-            item2 = EquippedSlot[Slot2].transform.GetChild(0).gameObject;
+            //item2 = EquippedSlot[Slot2].transform.GetChild(0).gameObject;
             Destroy(EquippedSlot[Slot2].transform.GetChild(0).gameObject);
         }
         else item2 = null;
 
-        if (item1)
-        {
-            GameObject tempObj = Instantiate(item1, EquippedSlot[Slot2].transform);
-            tempObj.GetComponent<Image>().enabled = true;
-        }
-        if (item2)
-        {
-            GameObject tempObj = Instantiate(item2, EquippedSlot[Slot1].transform);
-            tempObj.GetComponent<Image>().enabled = true;
-        }
+        //if (item1)
+        //{
+        //    GameObject tempObj = Instantiate(item1, EquippedSlot[Slot2].transform);
+        //    tempObj.GetComponent<Image>().enabled = true;
+        //}
+        //if (item2)
+        //{
+        //    GameObject tempObj = Instantiate(item2, EquippedSlot[Slot1].transform);
+        //    tempObj.GetComponent<Image>().enabled = true;
+        //}
 
         ItemBase temp = null;
         if (EquippedItems[Slot1])
         {
             temp = Instantiate(EquippedItems[Slot1]);
             temp.name = EquippedItems[Slot1].name;
+            temp.GetComponent<Image>().enabled = true;
             Destroy(EquippedItems[Slot1].gameObject);
         }
         if (EquippedItems[Slot2])
         {
             EquippedItems[Slot1] = Instantiate(EquippedItems[Slot2]);
             EquippedItems[Slot1].name = EquippedItems[Slot2].name;
+            EquippedItems[Slot1].GetComponent<Image>().enabled = true;
             Destroy(EquippedItems[Slot2].gameObject);
         }
         else EquippedItems[Slot1] = null;
@@ -320,42 +384,42 @@ public class InventoryManager : MonoBehaviour
 
         if (EquippedSlot[Slot1].transform.childCount > 0)
         {
-            item1 = EquippedSlot[Slot1].transform.GetChild(0).gameObject;
+            //item1 = EquippedSlot[Slot1].transform.GetChild(0).gameObject;
             Destroy(EquippedSlot[Slot1].transform.GetChild(0).gameObject);
         }
         else item1 = null;
         if (InventorySlot[Slot2].transform.childCount > 0)
         {
-            item2 = InventorySlot[Slot2].transform.GetChild(0).gameObject;
+            //item2 = InventorySlot[Slot2].transform.GetChild(0).gameObject;
             Destroy(InventorySlot[Slot2].transform.GetChild(0).gameObject);
         }
         else item2 = null;
 
-        if (item1)
-        {
-            GameObject tempObj = Instantiate(item1, InventorySlot[Slot2].transform);
-            tempObj.name = item1.name;
-            tempObj.GetComponent<Image>().enabled = true;
-        }
-        if (item2)
-        {
-            GameObject tempObj = Instantiate(item2, EquippedSlot[Slot1].transform);
-            tempObj.name = item2.name;
-            tempObj.GetComponent<Image>().enabled = true;
-        }
+        //if (item1)
+        //{
+        //    GameObject tempObj = Instantiate(item1, InventorySlot[Slot2].transform);
+        //    tempObj.name = item1.name;
+        //}
+        //if (item2)
+        //{
+        //    GameObject tempObj = Instantiate(item2, EquippedSlot[Slot1].transform);
+        //    tempObj.name = item2.name;
+        //}
 
         ItemBase temp = null;
 
         if (EquippedItems[Slot1])
         {
-            temp = Instantiate(EquippedItems[Slot1]);
+            temp = Instantiate(EquippedItems[Slot1], InventorySlot[Slot2].transform);
             temp.name = EquippedItems[Slot1].name;
+            temp.GetComponent<Image>().enabled = true;
             Destroy(EquippedItems[Slot1].gameObject);
         }
         if (Inventory[Slot2])
         {
-            EquippedItems[Slot1] = Instantiate(Inventory[Slot2]);
+            EquippedItems[Slot1] = Instantiate(Inventory[Slot2], EquippedSlot[Slot1].transform);
             EquippedItems[Slot1].name = Inventory[Slot2].name;
+            EquippedItems[Slot1].GetComponent<Image>().enabled = true;
             Destroy(Inventory[Slot2].gameObject);
         }
         else EquippedItems[Slot1] = null;

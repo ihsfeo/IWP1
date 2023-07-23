@@ -13,6 +13,8 @@ public class EnemyBase : MonoBehaviour
 
     protected int Level;
 
+    protected float DamageTime = 0;
+
     protected ItemBase.TypeOfDamage ShieldType;
     protected List<ItemBase.TypeOfDamage> ShieldWeakness = new List<ItemBase.TypeOfDamage>();
     public enum EnemyState
@@ -62,7 +64,7 @@ public class EnemyBase : MonoBehaviour
         return -1;
     }
 
-    public int TakeDamage(ItemBase.TypeOfDamage Element, int damage, bool AdditionalHit = false)
+    public int TakeDamage(ItemBase.TypeOfDamage Element, float damage, bool AdditionalHit = false)
     {
         // Damage Calculation
         {
@@ -75,12 +77,14 @@ public class EnemyBase : MonoBehaviour
                 }
             }
 
-            int FinalDamage = damage * (1 - (int)status.GetStat(CStats.Stats.FireDefencePercentage + 2 * (int)Element) / 100); // % Defence
+            int FinalDamage = (int)(damage * (1 - (int)status.GetStat(CStats.Stats.FireDefencePercentage + 2 * (int)Element) / 100)); // % Defence
             FinalDamage -= (int)status.GetStat(CStats.Stats.FireDefenceFlat + 2 * (int)Element); // Flat Defence
             if (FinalDamage <= 0)
                 FinalDamage = 1;
 
             status.Health -= FinalDamage;
+            DamageTime = 0.2f;
+            GetComponent<SpriteRenderer>().color = new Color(255, 0, 0);
             if (status.Health <= 0)
                 return ((int)eEnemyType + 1) * ((int)eEnemyVariation + 1) * Level;
         }

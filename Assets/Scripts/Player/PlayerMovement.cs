@@ -48,7 +48,12 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "CameraBounds")
+        if (collision.gameObject.tag == "NPC")
+        {
+            collision.GetComponent<CraftingNPC>().Interact(true);
+            GetComponent<PlayerInfo>().NPC.Add(collision.gameObject);
+        }
+        else if (collision.gameObject.tag == "CameraBounds")
             cameraBounds.Add(collision.gameObject.GetComponent<CameraBounds>());
         else if (collision.gameObject.tag != "Untagged")
             CollisionObjects.Add(collision.gameObject);
@@ -56,7 +61,12 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.gameObject.tag == "CameraBounds")
+        if (collision.gameObject.tag == "NPC")
+        {
+            collision.GetComponent<CraftingNPC>().Interact(false);
+            GetComponent<PlayerInfo>().NPC.Remove(collision.gameObject);
+        }
+        else if (collision.gameObject.tag == "CameraBounds")
             cameraBounds.Remove(collision.gameObject.GetComponent<CameraBounds>());
         else if (collision.gameObject.tag != "Untagged")
             CollisionObjects.Remove(collision.gameObject);

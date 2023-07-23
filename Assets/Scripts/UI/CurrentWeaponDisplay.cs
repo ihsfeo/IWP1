@@ -10,7 +10,7 @@ public class CurrentWeaponDisplay : MonoBehaviour
         for (int i = 0; i < 3; i++)
         {
             if (transform.GetChild(i).childCount > 0)
-                Destroy(transform.GetChild(i).GetChild(0).gameObject);
+                DestroyImmediate(transform.GetChild(i).GetChild(0).gameObject);
 
             if (weaponList[i] != null)
             {
@@ -19,6 +19,7 @@ public class CurrentWeaponDisplay : MonoBehaviour
                 transform.GetChild(i).GetChild(0).localScale = new Vector3(weaponList[i].transform.localScale.x * 100, weaponList[i].transform.localScale.y * 100, 1);
                 transform.GetChild(i).GetChild(0).GetComponent<Image>().enabled = true;
                 transform.GetChild(i).GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
+                transform.GetChild(i).GetChild(0).gameObject.SetActive(true);
 
                 if (current == i)
                 {

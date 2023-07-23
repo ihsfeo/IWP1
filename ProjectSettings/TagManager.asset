@@ -13,6 +13,8 @@ TagManager:
   - CameraBounds
   - iSlot
   - iEquip
+  - DetectionRange
+  - NPC
   layers:
   - Default
   - TransparentFX

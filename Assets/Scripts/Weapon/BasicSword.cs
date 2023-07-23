@@ -5,6 +5,7 @@ using UnityEngine;
 public class BasicSword : ItemBase
 {
     [SerializeField] PlayerInfo playerInfo;
+    [SerializeField] WeaponSO weaponSO;
 
     List<GameObject> HitList = new List<GameObject>();
     List<GameObject> CollisionObjects = new List<GameObject>();
@@ -47,15 +48,20 @@ public class BasicSword : ItemBase
     }
 
     // Start is called before the first frame update
-    void Awake()
+    public override void Init()
     {
         playerInfo = FindObjectOfType<PlayerInfo>();
-        eTypeOfDamage = TypeOfDamage.Physical;
-        BaseDamage = 10;
+        eTypeOfDamage = weaponSO.typeOfDamage;
+        BaseDamage = weaponSO.BaseDamage;
+        eWeaponType = weaponSO.weaponType;
+        itemID = weaponSO.itemID;
+        Rarity = weaponSO.itemRarity;
+        for (int i = 0; i < weaponSO.Stats.Count; i++)
+        {
+            cStats.Add(new CStats(weaponSO.Stats[i], weaponSO.StatValues[i]));
+        }
         weaponProficiency = new WeaponProficiency(Rarity);
-        eWeaponType = WeaponType.Sword;
         Level = 1;
-        itemID = ItemID.Sword;
         MaxCount = 1;
         Count = 1;
         // Tree

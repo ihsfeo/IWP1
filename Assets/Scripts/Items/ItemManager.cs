@@ -16,4 +16,14 @@ public class ItemManager : MonoBehaviour
         }
         return null;
     }
+
+    public ItemBase GetItemBase(ItemBase.ItemID itemID)
+    {
+        for (int i = 0; i < ItemList.Count; i++)
+        {
+            if (ItemList[i].itemID == itemID)
+                return ItemList[i];
+        }
+        return null;
+    }
 }

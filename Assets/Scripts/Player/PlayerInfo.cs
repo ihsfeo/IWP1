@@ -19,8 +19,10 @@ public class PlayerInfo : MonoBehaviour
     [SerializeField] PlayerMovement playerMovement;
     [SerializeField] Status status;
     [SerializeField] CurrentWeaponDisplay weaponDisplay;
+    [SerializeField] Room StartRoom;
 
     List<ItemBase> WeaponList = new List<ItemBase>();
+    public List<GameObject> NPC = new List<GameObject>();
 
     public int Gold;
 
@@ -45,10 +47,19 @@ public class PlayerInfo : MonoBehaviour
         // 1. Switching active weapon
         // 2. Swtiching current equipment
         // 3. Upgrades stats
-        for (int i = 0; i < transform.GetChild(1).childCount; i++)
+        //while (transform.GetChild(1).childCount > 0)
+        //{
+        //    DestroyImmediate(transform.GetChild(1).GetChild(0).gameObject);
+        //}
+        List<GameObject> templist = new List<GameObject>();
+        for (int i = 0; i < 3; i++)
         {
-            Destroy(transform.GetChild(1).GetChild(0).gameObject);
+            if (WeaponList[i])
+                templist.Add(WeaponList[i].gameObject);
+            else
+                templist.Add(null);
         }
+
         if (WeaponList[CurrentWeapon] && inventoryManager.EquippedItems[4 + CurrentWeapon])
         {
            for (int i = 0; i < 3; i++)
@@ -56,19 +67,32 @@ public class PlayerInfo : MonoBehaviour
                 if (inventoryManager.EquippedItems[4 + i])
                 {
                     WeaponList[i] = Instantiate(inventoryManager.EquippedItems[4 + i], transform.GetChild(1));
+                    WeaponList[i].Init();
                     WeaponList[i].transform.localPosition = new Vector3(1, 0, 0);
                     WeaponList[i].transform.localScale = new Vector3(WeaponList[i].transform.localScale.x / 100, WeaponList[i].transform.localScale.y / 100, 1);
                     WeaponList[i].GetComponent<SpriteRenderer>().enabled = true;
                     WeaponList[i].GetComponent<Image>().enabled = false;
-                    WeaponList[i].GetComponent<BasicSword>().enabled = true;
+                    switch (WeaponList[i].itemID)
+                    {
+                        case ItemBase.ItemID.Sword:
+                            WeaponList[i].GetComponent<BasicSword>().enabled = true;
+                            break;
+                        case ItemBase.ItemID.Spear:
+                            WeaponList[i].GetComponent<BasicSpear>().enabled = true;
+                            break;
+                        default: break;
+                    }
                     WeaponList[i].GetComponent<BoxCollider2D>().enabled = true;
                     WeaponList[i].gameObject.SetActive(false);
                 }
                 else
                     WeaponList[i] = null;
+                if (templist[0])
+                    DestroyImmediate(templist[0]);
+                templist.RemoveAt(0);
             }
-            // Get Stats of current weapon
             WeaponList[CurrentWeapon].gameObject.SetActive(true);
+            status.IncludeStatsOf(WeaponList[CurrentWeapon]);
         }
         else
         {
@@ -78,11 +102,21 @@ public class PlayerInfo : MonoBehaviour
                 if (inventoryManager.EquippedItems[4 + i])
                 {
                     WeaponList[i] = Instantiate(inventoryManager.EquippedItems[4 + i], transform.GetChild(1));
+                    WeaponList[i].Init();
                     WeaponList[i].transform.localPosition = new Vector3(1, 0, 0);
                     WeaponList[i].transform.localScale = new Vector3(WeaponList[i].transform.localScale.x / 100, WeaponList[i].transform.localScale.y / 100, 1);
                     WeaponList[i].GetComponent<SpriteRenderer>().enabled = true;
                     WeaponList[i].GetComponent<Image>().enabled = false;
-                    WeaponList[i].GetComponent<BasicSword>().enabled = true;
+                    switch (WeaponList[i].itemID)
+                    {
+                        case ItemBase.ItemID.Sword:
+                            WeaponList[i].GetComponent<BasicSword>().enabled = true;
+                            break;
+                        case ItemBase.ItemID.Spear:
+                            WeaponList[i].GetComponent<BasicSpear>().enabled = true;
+                            break;
+                        default: break;
+                    }
                     WeaponList[i].GetComponent<BoxCollider2D>().enabled = true;
                     WeaponList[i].gameObject.SetActive(false);
                 }
@@ -93,8 +127,11 @@ public class PlayerInfo : MonoBehaviour
                     WeaponFound = true;
                     CurrentWeapon = i;
                     WeaponList[i].gameObject.SetActive(true);
-                    // Get the stats of this weapon
+                    status.IncludeStatsOf(WeaponList[CurrentWeapon]);
                 }
+                if (templist[0])
+                    DestroyImmediate(templist[0]);
+                templist.RemoveAt(0);
             }
         }
 
@@ -102,6 +139,14 @@ public class PlayerInfo : MonoBehaviour
         {
             if (inventoryManager.EquippedItems[i])
                status.IncludeStatsOf( inventoryManager.EquippedItems[i] );
+        }
+
+        if (WeaponList[CurrentWeapon])
+        {
+            WeaponList[CurrentWeapon].SetDamage(
+                status.GetStat(CStats.Stats.AttackFlat),
+                status.GetStat(CStats.Stats.AttackPercentage)
+                );
         }
 
         weaponDisplay.UpdateUI(WeaponList, CurrentWeapon);
@@ -160,8 +205,8 @@ public class PlayerInfo : MonoBehaviour
                 }
             }
 
-            int FinalDamage = damage * (1 - (int)status.GetStat(CStats.Stats.FireDefencePercentage + 2 * (int)Element) / 100); // % Defence
-            FinalDamage -= (int)status.GetStat(CStats.Stats.FireDefenceFlat + 2 * (int)Element); // Flat Defence
+            int FinalDamage = damage * (1 - (int)status.GetStat(CStats.Stats.FireDefencePercentage + 2 * (int)Element) / 100) * (1 - (int)status.GetStat(CStats.Stats.DefencePercentage) / 100); // % Defence
+            FinalDamage -= (int)status.GetStat(CStats.Stats.FireDefenceFlat + 2 * (int)Element) + (int)status.GetStat(CStats.Stats.DefenceFlat); // Flat Defence
             if (FinalDamage <= 0)
                 FinalDamage = 1;
 
@@ -298,6 +343,13 @@ public class PlayerInfo : MonoBehaviour
 
     private void Update()
     {
+        if (status.Health == 0)
+        {
+            status.Health = (int)status.GetStat(CStats.Stats.MaxHealth);
+            StartRoom.Enter();
+            transform.position = new Vector3(-10, 0, 0);
+        }
+
         switch (CurrentSceneState)
         {
             case SceneState.Game:
@@ -321,6 +373,15 @@ public class PlayerInfo : MonoBehaviour
                 {
                     CurrentSceneState = SceneState.Inventory;
                     inventoryManager.gameObject.SetActive(true);
+                }
+
+                if (NPC.Count > 0)
+                {
+                    if (Input.GetKeyDown(KeyCode.F))
+                    {
+                        CurrentSceneState = SceneState.Craft;
+                        craftingManager.gameObject.SetActive(true);
+                    }
                 }
 
                 if (status.InLava)

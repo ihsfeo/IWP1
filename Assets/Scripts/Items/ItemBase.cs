@@ -98,6 +98,12 @@ public class ItemBase : MonoBehaviour
     {
         Sword = 0,
         Helmet,
+        Shirt,
+        Pants,
+        Shoe,
+        Spear,
+        Bow,
+        WeaponFragment1,
         Apple,
         Total
     }
@@ -120,17 +126,25 @@ public class ItemBase : MonoBehaviour
     public TypeOfItems ItemType;
 
     // Weapon Stuff
-    protected int BaseDamage;
+    protected float BaseDamage;
+    protected float Damage;
     protected WeaponType eWeaponType;
     protected int Level;
+    public List<CStats> cStats = new List<CStats>();
 
     // Equipment Stuff
 
-    public int GetDamage()
-    {
-        int returnDamage;
 
-        returnDamage = BaseDamage;
+    public virtual void Init()
+    {
+
+    }
+
+    public float GetDamage()
+    {
+        float returnDamage;
+
+        returnDamage = Damage;
 
         return returnDamage;
     }
@@ -148,5 +162,10 @@ public class ItemBase : MonoBehaviour
     public WeaponType GetWeaponType()
     {
         return eWeaponType;
+    }
+
+    public void SetDamage(float FDamage, float PDamage)
+    {
+        Damage = BaseDamage * (1 + PDamage / 100)/* * (1 + PTypeDamage / 100)*/ + FDamage/* + FTypeDamage*/;
     }
 }

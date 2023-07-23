@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class FlyingEnemy1 : EnemyBase
 {
+    [SerializeField] ItemManager itemManager;
     // Starts from N clockwise
     List<float> SteeringDesire = new List<float>();
     List<GameObject> CollisionObjects = new List<GameObject>();
+    List<GameObject> DetectedObjects = new List<GameObject>();
 
     float Up;
     float Right;
@@ -142,21 +144,21 @@ public class FlyingEnemy1 : EnemyBase
 
     bool SeePlayer()
     {
-        for (int i = 0; i < CollisionObjects.Count; i++)
+        for (int i = 0; i < DetectedObjects.Count; i++)
         {
-            if (CollisionObjects[i].tag == "Player")
+            if (DetectedObjects[i].tag == "Player")
             {
                 gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
                 RaycastHit2D hit2D;
 
                 // While does not hit player, raycast 5 times, 4 corners and middle
-                hit2D = Physics2D.Raycast(transform.position, CollisionObjects[i].transform.position - transform.position, 10);
+                hit2D = Physics2D.Raycast(transform.position, DetectedObjects[i].transform.position - transform.position, 10);
                 //Debug.DrawRay(transform.position, CollisionObjects[i].transform.position - transform.position, Color.red, 1.0f);
                 gameObject.layer = LayerMask.NameToLayer("Default");
                 if (hit2D.collider == null || hit2D.collider.gameObject.tag != "Player")
                     return false;
 
-                dotIntent(CollisionObjects[i].transform.position - new Vector3(hit2D.point.x, hit2D.point.y, 0), 5);
+                dotIntent(DetectedObjects[i].transform.position - new Vector3(hit2D.point.x, hit2D.point.y, 0), 5);
                 TargetSpotted = 3;
                 TargetLocation = new Vector3(hit2D.point.x, hit2D.point.y, 0);
                 return true;
@@ -221,7 +223,18 @@ public class FlyingEnemy1 : EnemyBase
 
     private void Update()
     {
+        DetectedObjects = transform.GetChild(0).GetComponent<DetectionRange>().DetectedObjects;
         Vector3 oldPosition = transform.position;
+
+        if (DamageTime > 0)
+        {
+            DamageTime -= Time.deltaTime;
+            if (DamageTime <= 0)
+            {
+                DamageTime = 0;
+                GetComponent<SpriteRenderer>().color = new Color(255, 255, 255);
+            }
+        }
 
         TargetInSight = SeePlayer();
 
@@ -273,6 +286,9 @@ public class FlyingEnemy1 : EnemyBase
                     // Death Animation
                     // Drop Loot etc
                     // Destroy
+                    DroppedItem temp = GameObject.Instantiate(itemManager.droppedItem).GetComponent<DroppedItem>();
+                    temp.transform.position = transform.position;
+                    temp.Init(ItemBase.ItemID.WeaponFragment1, Random.Range(2, 5), itemManager);
                     Destroy(gameObject);
                     break;
             }

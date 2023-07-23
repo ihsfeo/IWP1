@@ -6,20 +6,19 @@ public class Equipment : ItemBase
 {
     public EquipmentSO EquipmentValues;
 
-    List<CStats> Stats = new List<CStats>();
-
-    private void Awake()
+    public override void Init()
     {
         Level = 1;
         itemID = EquipmentValues.itemID;
         Rarity = EquipmentValues.itemRarity;
         ItemName = EquipmentValues.Name;
+        Description = EquipmentValues.Description;
         for (int i = 0; i < EquipmentValues.Stats.Count; i++)
-            Stats.Add(new CStats(EquipmentValues.Stats[i], EquipmentValues.StatValues[i]));
+            cStats.Add(new CStats(EquipmentValues.Stats[i], EquipmentValues.StatValues[i]));
     }
 
     public List<CStats> GetStats()
     {
-        return Stats;
+        return cStats;
     }
 }

@@ -27,12 +27,8 @@ public class ClickAndDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
         Clone = Instantiate(this.gameObject, transform.parent);
         Clone.name = this.name;
         Clone.GetComponent<ClickAndDrag>().enabled = false;
-
-        //PlayerProperties pp = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerProperties>();
-        //if (pp.LootScreen.activeSelf && Slot < 30)
-        //{
-        //    pp.CannotDropHere.SetActive(true);
-        //}
+        Clone.GetComponent<HoverDescription>().enabled = false;
+        Clone.GetComponent<BoxCollider2D>().enabled = false;
     }
 
     public void OnDrag(PointerEventData eventData)
