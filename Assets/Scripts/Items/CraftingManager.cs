@@ -94,6 +94,7 @@ public class CraftingManager : MonoBehaviour
             ItemBase temp = Instantiate(itemManager.GetItemBase(CraftableList[CurrentSelect].itemID));
             temp.Init();
             inventoryManager.AddToInventory( temp );
+            Destroy(temp.gameObject);
             for (int i = 0; i < MaterialList.Count; i++)
             {
                 inventoryManager.Remove(MaterialList[i], AmountList[i] * CraftCount);

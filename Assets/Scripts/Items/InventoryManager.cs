@@ -284,15 +284,17 @@ public class InventoryManager : MonoBehaviour
         ItemBase temp = null;
         if (Inventory[Slot1])
         {
-            temp = Instantiate(Inventory[Slot1]);
+            temp = Instantiate(Inventory[Slot1], InventorySlot[Slot2].transform);
             temp.name = Inventory[Slot1].name;
+            temp.cStats = Inventory[Slot1].cStats;
             temp.GetComponent<Image>().enabled = true;
             Destroy(Inventory[Slot1]);
         }
         if (Inventory[Slot2])
         {
-            Inventory[Slot1] = Instantiate(Inventory[Slot2]);
+            Inventory[Slot1] = Instantiate(Inventory[Slot2], InventorySlot[Slot1].transform);
             Inventory[Slot1].name = Inventory[Slot2].name;
+            Inventory[Slot1].cStats = Inventory[Slot2].cStats;
             Inventory[Slot1].GetComponent<Image>().enabled = true;
             Destroy(Inventory[Slot2]);
         }
@@ -334,15 +336,17 @@ public class InventoryManager : MonoBehaviour
         ItemBase temp = null;
         if (EquippedItems[Slot1])
         {
-            temp = Instantiate(EquippedItems[Slot1]);
+            temp = Instantiate(EquippedItems[Slot1], EquippedSlot[Slot2].transform);
             temp.name = EquippedItems[Slot1].name;
+            temp.cStats = Inventory[Slot1].cStats;
             temp.GetComponent<Image>().enabled = true;
             Destroy(EquippedItems[Slot1].gameObject);
         }
         if (EquippedItems[Slot2])
         {
-            EquippedItems[Slot1] = Instantiate(EquippedItems[Slot2]);
+            EquippedItems[Slot1] = Instantiate(EquippedItems[Slot2], EquippedSlot[Slot1].transform);
             EquippedItems[Slot1].name = EquippedItems[Slot2].name;
+            EquippedItems[Slot1].cStats = Inventory[Slot2].cStats;
             EquippedItems[Slot1].GetComponent<Image>().enabled = true;
             Destroy(EquippedItems[Slot2].gameObject);
         }
@@ -412,6 +416,7 @@ public class InventoryManager : MonoBehaviour
         {
             temp = Instantiate(EquippedItems[Slot1], InventorySlot[Slot2].transform);
             temp.name = EquippedItems[Slot1].name;
+            temp.cStats = EquippedItems[Slot1].cStats;
             temp.GetComponent<Image>().enabled = true;
             Destroy(EquippedItems[Slot1].gameObject);
         }
@@ -419,6 +424,7 @@ public class InventoryManager : MonoBehaviour
         {
             EquippedItems[Slot1] = Instantiate(Inventory[Slot2], EquippedSlot[Slot1].transform);
             EquippedItems[Slot1].name = Inventory[Slot2].name;
+            EquippedItems[Slot1].cStats = Inventory[Slot2].cStats;
             EquippedItems[Slot1].GetComponent<Image>().enabled = true;
             Destroy(Inventory[Slot2].gameObject);
         }

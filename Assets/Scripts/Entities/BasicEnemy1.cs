@@ -475,5 +475,6 @@ public class BasicEnemy1 : EnemyBase
         Up = 0;
         TargetInSight = false;
         TargetSpotted = 0;
+        GetComponent<SpriteRenderer>().color = new Color(255, 255, 255);
     }
 }

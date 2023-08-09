@@ -167,4 +167,13 @@ public class MapManager : MonoBehaviour
     {
         // do in the library later
     }
+
+    public int RandomDirection(int Chance1, int Chance2, int Chance3, int Chance4)
+    {
+        int Result = Random.Range(1, Chance1 + Chance2 + Chance3 + Chance4);
+        if (Result <= Chance1) return 1;
+        else if (Result <= Chance1 + Chance2) return 2;
+        else if (Result <= Chance1 + Chance2 + Chance3) return 3;
+        else return 4;
+    }
 }

@@ -23,29 +23,37 @@ public class ClickAndDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        OGPosition = gameObject.transform.position;
-        Clone = Instantiate(this.gameObject, transform.parent);
-        Clone.name = this.name;
-        Clone.GetComponent<ClickAndDrag>().enabled = false;
-        Clone.GetComponent<HoverDescription>().enabled = false;
-        Clone.GetComponent<BoxCollider2D>().enabled = false;
+        if ((tag == "iSlot" && inventoryManager.Inventory[Slot]) ||
+            (tag == "iEquip" && inventoryManager.EquippedItems[Slot]))
+        {
+                OGPosition = gameObject.transform.position;
+                Clone = Instantiate(this.gameObject, transform.parent);
+                Clone.name = this.name;
+                Clone.GetComponent<ClickAndDrag>().enabled = false;
+                Clone.GetComponent<HoverDescription>().enabled = false;
+                Clone.GetComponent<BoxCollider2D>().enabled = false;
+        }
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        //if (inventoryManager.Inventory[Slot] != null)
-        //{
+        if ((tag == "iSlot" && inventoryManager.Inventory[Slot]) || 
+            (tag == "iEquip" && inventoryManager.EquippedItems[Slot]))
+        {
             dragRectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;
             CheckForAvailableSlot();
-        //}
-
+        }
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        gameObject.transform.position = OGPosition;
-        SelectSwappableSlot();
-        Destroy(Clone);
+        if ((tag == "iSlot" && inventoryManager.Inventory[Slot]) ||
+            (tag == "iEquip" && inventoryManager.EquippedItems[Slot]))
+        {
+            gameObject.transform.position = OGPosition;
+            SelectSwappableSlot();
+            Destroy(Clone);
+        }
     }
 
     void SelectSwappableSlot()
@@ -62,28 +70,22 @@ public class ClickAndDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
             {
                 SlotToSwapWith = raycastResults[i].gameObject.GetComponentInChildren<ClickAndDrag>().Slot;
 
-                if (SlotToSwapWith >= 30 && SlotToSwapWith < 42)
+                
+                if (Clone.tag == "iSlot" && raycastResults[i].gameObject.tag == "iSlot")
                 {
-                    return;
+                    inventoryManager.SwapTwoSlots(Slot, SlotToSwapWith);
                 }
-                else 
+                else if (Clone.tag == "iEquip" && raycastResults[i].gameObject.tag == "iEquip")
                 {
-                    if (Clone.tag == "iSlot" && raycastResults[i].gameObject.tag == "iSlot")
-                    {
-                        inventoryManager.SwapTwoSlots(Slot, SlotToSwapWith);
-                    }
-                    else if (Clone.tag == "iEquip" && raycastResults[i].gameObject.tag == "iEquip")
-                    {
-                        inventoryManager.SwapTwoEquipment(Slot, SlotToSwapWith);
-                    }
-                    else if (Clone.tag == "iEquip" && raycastResults[i].gameObject.tag == "iSlot")
-                    {
-                        inventoryManager.SwapEquipmentItem(Slot, SlotToSwapWith);
-                    }
-                    else if(Clone.tag == "iSlot" && raycastResults[i].gameObject.tag == "iEquip")
-                    {
-                        inventoryManager.SwapEquipmentItem(SlotToSwapWith, Slot);
-                    }
+                    inventoryManager.SwapTwoEquipment(Slot, SlotToSwapWith);
+                }
+                else if (Clone.tag == "iEquip" && raycastResults[i].gameObject.tag == "iSlot")
+                {
+                    inventoryManager.SwapEquipmentItem(Slot, SlotToSwapWith);
+                }
+                else if(Clone.tag == "iSlot" && raycastResults[i].gameObject.tag == "iEquip")
+                {
+                    inventoryManager.SwapEquipmentItem(SlotToSwapWith, Slot);
                 }
 
 

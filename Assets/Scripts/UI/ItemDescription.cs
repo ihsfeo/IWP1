@@ -21,7 +21,10 @@ public class ItemDescription : MonoBehaviour
     {
         try
         {
-            Name.text = item.ItemName + " (" + new string[] { "Common", "Uncommon", "Rare" }[(int)item.Rarity] + ")";
+            if (item.Count != 1)
+                Name.text = item.ItemName + " (" + item.Count +")" + " (" + new string[] { "Common", "Uncommon", "Rare" }[(int)item.Rarity] + ")";
+            else
+                Name.text = item.ItemName + " (" + new string[] { "Common", "Uncommon", "Rare" }[(int)item.Rarity] + ")";
             Description.text = item.Description;
             for (int i = 0; i < Stats.Count; i++)
             {

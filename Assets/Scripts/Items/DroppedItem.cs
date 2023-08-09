@@ -27,7 +27,7 @@ public class DroppedItem : MonoBehaviour
     public void Init(ItemBase.ItemID itemID, int count, ItemManager itemManager)
     {
         Item = Instantiate(itemManager.GetItem(itemID), transform).GetComponent<ItemBase>();
-        if (count > Item.Count)
+        if (count > Item.MaxCount)
         {
             count -= Item.MaxCount;
             DroppedItem temp = Instantiate(itemManager.droppedItem).GetComponent<DroppedItem>();

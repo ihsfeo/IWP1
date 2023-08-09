@@ -102,10 +102,13 @@ public class PlayerMovement : MonoBehaviour
 
         if (!playerInfo.SwingingSword)
         {
-            if (FacingDirection == Direction.Left)
-                transform.LookAt(transform.position + new Vector3(0, 0, -1));
-            else if (FacingDirection == Direction.Right)
-                transform.LookAt(transform.position + new Vector3(0, 0, 1));
+            if (Time.timeScale != 0)
+            {
+                if (FacingDirection == Direction.Left)
+                    transform.LookAt(transform.position + new Vector3(0, 0, -1));
+                else if (FacingDirection == Direction.Right)
+                    transform.LookAt(transform.position + new Vector3(0, 0, 1));
+            }
         }
 
         // Original Position
@@ -171,11 +174,11 @@ public class PlayerMovement : MonoBehaviour
 
         // Gravity
         Up -= Time.deltaTime / 2 * FallSpeed;
-        if (Up < -TerminalVelocity / 2 * FallSpeed)
-            Up = -TerminalVelocity / 2 * FallSpeed;
-        else if (Up > TerminalVelocity / 2 * FallSpeed)
-            Up = TerminalVelocity / 2 * FallSpeed;
-        transform.position += new Vector3(0, Up, 0);
+        if (Up < -TerminalVelocity / 2 * FallSpeed * Time.timeScale)
+            Up = -TerminalVelocity / 2 * FallSpeed * Time.timeScale;
+        else if (Up > TerminalVelocity / 2 * FallSpeed * Time.timeScale)
+            Up = TerminalVelocity / 2 * FallSpeed * Time.timeScale;
+        transform.position += new Vector3(0, Up, 0) * Time.timeScale;
 
         // Vertical Collisions
         {
@@ -329,24 +332,24 @@ public class PlayerMovement : MonoBehaviour
             {
                 DashImmunity -= Time.deltaTime;
                 if (status.InWater)
-                    transform.position += new Vector3(Right * 0.7f * status.MovementSpeed, 0, 0);
+                    transform.position += new Vector3(Right * 0.7f * status.MovementSpeed * Time.timeScale, 0, 0);
                 else
-                    transform.position += new Vector3(Right * status.MovementSpeed, 0, 0);
+                    transform.position += new Vector3(Right * status.MovementSpeed * Time.timeScale, 0, 0);
                 Right /= 1 + 6f * Time.deltaTime;
             }
             else if (!status.InWater)
             {
-                transform.position += new Vector3(Right * status.MovementSpeed, 0, 0);
+                transform.position += new Vector3(Right * status.MovementSpeed * Time.timeScale, 0, 0);
                 Right /= 1 + 8 * Time.deltaTime;
             }
             else
-        {
-            transform.position += new Vector3(Right * 0.7f * status.MovementSpeed, 0, 0);
-            if (Mathf.Abs(Right) <= 0.055f)
-                Right /= 1.04f + Mathf.Abs(Right * 1.2f * 1.3f) * 30 * Time.deltaTime;
-            else
-                Right /= 1f + Mathf.Abs(Right * 0.69f * 1.3f) * 30 * Time.deltaTime;
-        }
+            {
+                transform.position += new Vector3(Right * 0.7f * status.MovementSpeed * Time.timeScale, 0, 0);
+                if (Mathf.Abs(Right) <= 0.055f)
+                    Right /= 1.04f + Mathf.Abs(Right * 1.2f * 1.3f) * 30 * Time.deltaTime;
+                else
+                    Right /= 1f + Mathf.Abs(Right * 0.69f * 1.3f) * 30 * Time.deltaTime;
+            }
         }
 
         status.InWater = false;
@@ -425,11 +428,11 @@ public class PlayerMovement : MonoBehaviour
             if ((cPosition - transform.position).magnitude > 10 ||
                 Mathf.Abs(cPosition.y - transform.position.y) > 5.7)
             {
-                cPosition = cPosition + (-cPosition + transform.position) / 40;
+                cPosition = cPosition + (-cPosition + transform.position) / 40 * Time.timeScale;
             }
             else
             {
-                cPosition = cPosition + (-cPosition + transform.position) / 80;
+                cPosition = cPosition + (-cPosition + transform.position) / 80 * Time.timeScale;
             }
 
             UpdateCamera(cPosition);
@@ -441,19 +444,19 @@ public class PlayerMovement : MonoBehaviour
         // Clamp
         if (cPosition.y - transform.position.y > 6)
         {
-            cPosition += new Vector3(0, 6 + transform.position.y - cPosition.y, 0);
+            cPosition += new Vector3(0, 6 + transform.position.y - cPosition.y, 0) * Time.timeScale;
         }
         else if (cPosition.y - transform.position.y < -6)
         {
-            cPosition += new Vector3(0, -6 + transform.position.y - cPosition.y, 0);
+            cPosition += new Vector3(0, -6 + transform.position.y - cPosition.y, 0) * Time.timeScale;
         }
         if (cPosition.x - transform.position.x > 10)
         {
-            cPosition += new Vector3(10 + transform.position.x - cPosition.x, 0, 0);
+            cPosition += new Vector3(10 + transform.position.x - cPosition.x, 0, 0) * Time.timeScale;
         }
         else if (cPosition.x - transform.position.x < -10)
         {
-            cPosition += new Vector3(-10 + transform.position.x - cPosition.x, 0, 0);
+            cPosition += new Vector3(-10 + transform.position.x - cPosition.x, 0, 0) * Time.timeScale;
         }
 
         for (int i = 0; i < cameraBounds.Count; i++)

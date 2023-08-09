@@ -34,6 +34,7 @@ public class PlayerInfo : MonoBehaviour
     int CurrentWeapon;
 
     float LavaTime = 0;
+    float DamageTime = 0;
 
     public void UpdateStatus()
     {
@@ -66,7 +67,7 @@ public class PlayerInfo : MonoBehaviour
             {
                 if (inventoryManager.EquippedItems[4 + i])
                 {
-                    WeaponList[i] = Instantiate(inventoryManager.EquippedItems[4 + i], transform.GetChild(1));
+                    WeaponList[i] = Instantiate(inventoryManager.EquippedItems[4 + i], transform.GetChild(0));
                     WeaponList[i].Init();
                     WeaponList[i].transform.localPosition = new Vector3(1, 0, 0);
                     WeaponList[i].transform.localScale = new Vector3(WeaponList[i].transform.localScale.x / 100, WeaponList[i].transform.localScale.y / 100, 1);
@@ -101,7 +102,7 @@ public class PlayerInfo : MonoBehaviour
             {
                 if (inventoryManager.EquippedItems[4 + i])
                 {
-                    WeaponList[i] = Instantiate(inventoryManager.EquippedItems[4 + i], transform.GetChild(1));
+                    WeaponList[i] = Instantiate(inventoryManager.EquippedItems[4 + i], transform.GetChild(0));
                     WeaponList[i].Init();
                     WeaponList[i].transform.localPosition = new Vector3(1, 0, 0);
                     WeaponList[i].transform.localScale = new Vector3(WeaponList[i].transform.localScale.x / 100, WeaponList[i].transform.localScale.y / 100, 1);
@@ -211,6 +212,8 @@ public class PlayerInfo : MonoBehaviour
                 FinalDamage = 1;
 
             status.Health -= FinalDamage;
+            DamageTime = 0.2f;
+            GetComponent<SpriteRenderer>().color = new Color(255, 0, 0);
             if (status.Health < 0)
                 status.Health = 0;
         }
@@ -218,7 +221,7 @@ public class PlayerInfo : MonoBehaviour
         if (status.IsFrozen)
         {
             status.IsFrozen = false;
-            TakeDamage(ItemBase.TypeOfDamage.Ice, damage * 2);
+            TakeDamage(ItemBase.TypeOfDamage.Ice, damage * 2, true);
         }
 
         if (Element == ItemBase.TypeOfDamage.Lightning && !AdditionalHit)
@@ -343,6 +346,7 @@ public class PlayerInfo : MonoBehaviour
 
     private void Update()
     {
+        // Death
         if (status.Health == 0)
         {
             status.Health = (int)status.GetStat(CStats.Stats.MaxHealth);
@@ -350,9 +354,14 @@ public class PlayerInfo : MonoBehaviour
             transform.position = new Vector3(-10, 0, 0);
         }
 
+        // Damage Color
+        if (DamageTime <= 0) GetComponent<SpriteRenderer>().color = new Color(255, 255, 255);
+        else DamageTime -= Time.deltaTime;
+
         switch (CurrentSceneState)
         {
             case SceneState.Game:
+                Time.timeScale = 1;
                 // Weapon Switching
                 if (!SwingingSword)
                 {
@@ -377,6 +386,7 @@ public class PlayerInfo : MonoBehaviour
 
                 if (NPC.Count > 0)
                 {
+                    NPC[0].GetComponent<CraftingNPC>().Interact(true);
                     if (Input.GetKeyDown(KeyCode.F))
                     {
                         CurrentSceneState = SceneState.Craft;
@@ -432,7 +442,8 @@ public class PlayerInfo : MonoBehaviour
                 healthBar.UpdateHealthBar((int)status.GetStat(CStats.Stats.MaxHealth), status.Health);
                 break;
             case SceneState.Inventory:
-                if (Input.GetKeyDown(KeyCode.I))
+                Time.timeScale = 0;
+                if (Input.GetKeyDown(KeyCode.I) || Input.GetKeyDown(KeyCode.Escape))
                 {
                     CurrentSceneState = SceneState.Game;
                     inventoryManager.gameObject.SetActive(false);
@@ -440,6 +451,7 @@ public class PlayerInfo : MonoBehaviour
                 // Hover to view info, not when holding item
                 break;
             case SceneState.Craft:
+                Time.timeScale = 0;
                 if (Input.GetKeyDown(KeyCode.Escape))
                 {
                     CurrentSceneState = SceneState.Game;

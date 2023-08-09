@@ -137,7 +137,7 @@ public class ItemBase : MonoBehaviour
 
     public virtual void Init()
     {
-
+        GetComponent<SpriteRenderer>().enabled = false;
     }
 
     public float GetDamage()

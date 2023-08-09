@@ -478,5 +478,6 @@ public class FlyingEnemy1 : EnemyBase
         Right = 0;
         Up = 0;
         TargetInSight = false;
+        GetComponent<SpriteRenderer>().color = new Color(255, 255, 255);
     }
 }
