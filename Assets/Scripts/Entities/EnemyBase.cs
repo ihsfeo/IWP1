@@ -5,6 +5,8 @@ using UnityEngine;
 public class EnemyBase : MonoBehaviour
 {
     [SerializeField] protected Status status;
+    [SerializeField] protected AudioSource HurtAudio;
+    [SerializeField] protected AudioSource DeathAudio;
 
     protected int Shield;
     protected int ShieldMax;
@@ -51,7 +53,7 @@ public class EnemyBase : MonoBehaviour
     protected EnemyMovementType eEnemyMovementType;
     protected EnemyVariation eEnemyVariation;
     protected EnemyState eEnemyState;
-
+    
 
     int HasStatusAilment(ItemBase.TypeOfDamage Element)
     {
@@ -87,6 +89,7 @@ public class EnemyBase : MonoBehaviour
             GetComponent<SpriteRenderer>().color = new Color(255, 0, 0);
             if (status.Health <= 0)
                 return ((int)eEnemyType + 1) * ((int)eEnemyVariation + 1) * Level;
+            HurtAudio.Play();
         }
 
         // Frozen

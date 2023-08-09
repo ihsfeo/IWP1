@@ -17,9 +17,13 @@ public class PlayerInfo : MonoBehaviour
     [SerializeField] CraftingManager craftingManager;
     [SerializeField] InventoryManager inventoryManager;
     [SerializeField] PlayerMovement playerMovement;
-    [SerializeField] Status status;
+    [SerializeField] public Status status;
     [SerializeField] CurrentWeaponDisplay weaponDisplay;
     [SerializeField] Room StartRoom;
+    [SerializeField] AudioSource BGM;
+    [SerializeField] AudioSource BossBGM;
+    [SerializeField] AudioSource HurtAudio;
+    [SerializeField] AudioSource DeathAudio;
 
     List<ItemBase> WeaponList = new List<ItemBase>();
     public List<GameObject> NPC = new List<GameObject>();
@@ -215,7 +219,11 @@ public class PlayerInfo : MonoBehaviour
             DamageTime = 0.2f;
             GetComponent<SpriteRenderer>().color = new Color(255, 0, 0);
             if (status.Health < 0)
+            {
                 status.Health = 0;
+                return;
+            }
+            HurtAudio.Play();
         }
 
         if (status.IsFrozen)
@@ -349,9 +357,17 @@ public class PlayerInfo : MonoBehaviour
         // Death
         if (status.Health == 0)
         {
+            DeathAudio.Play();
             status.Health = (int)status.GetStat(CStats.Stats.MaxHealth);
-            StartRoom.Enter();
-            transform.position = new Vector3(-10, 0, 0);
+           // statusAilmentManager.
+            transform.position = new Vector3(-10, -45.5f, 0);
+            Destroy(statusAilmentManager.transform.parent.GetChild(4).gameObject);
+            for (int i = 0; i < status.StatusAilmentsList.Count; i++)
+            {
+                statusAilmentManager.RemoveGauge(status.StatusAilmentsList[i]); // Remove UI
+                status.StatusAilmentsList.Remove(status.StatusAilmentsList[i]); // Remove
+                i--;
+            }
         }
 
         // Damage Color

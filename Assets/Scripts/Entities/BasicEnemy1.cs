@@ -278,7 +278,8 @@ public class BasicEnemy1 : EnemyBase
                     // Death Animation
                     // Drop Loot etc
                     // Destroy
-
+                    DeathAudio.Play();
+                    itemManager = GameObject.FindGameObjectWithTag("ItemManager").GetComponent<ItemManager>();
                     DroppedItem temp = GameObject.Instantiate(itemManager.droppedItem).GetComponent<DroppedItem>();
                     temp.transform.position = transform.position;
                     temp.Init(ItemBase.ItemID.WeaponFragment1, Random.Range(2,5), itemManager);

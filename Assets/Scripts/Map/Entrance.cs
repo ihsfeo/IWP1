@@ -9,6 +9,9 @@ public class Entrance : MonoBehaviour
     [SerializeField] Entrance otherEntrance;
     RoomPart roomPart;
     [SerializeField] Room.Direction direction;
+    [SerializeField] bool StartRoom = false;
+    [SerializeField] GameObject MapPrefab;
+    [SerializeField] GameObject ManagerThing;
 
     private void Awake()
     {
@@ -19,6 +22,13 @@ public class Entrance : MonoBehaviour
     {
          if (collision.gameObject.tag == "Player")
         {
+            if (StartRoom)
+            {
+                GameObject temp = Instantiate(MapPrefab, ManagerThing.transform);
+                temp.transform.position = new Vector3(-50, -2.7f, 0);
+                collision.gameObject.transform.position = new Vector3(-10, 0, 0);
+                return;
+            }
             // Check if other entrance is Usable
             if (otherEntrance.IsUsable() && Usable)
             {

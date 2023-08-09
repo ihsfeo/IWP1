@@ -97,8 +97,6 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         FallSpeed = 1;
-        if (transform.position.y < -30) // Test
-            transform.position = new Vector3(2, -1, 0);
 
         if (!playerInfo.SwingingSword)
         {
@@ -461,6 +459,12 @@ public class PlayerMovement : MonoBehaviour
 
         for (int i = 0; i < cameraBounds.Count; i++)
         {
+            if (!cameraBounds[i])
+            {
+                cameraBounds.Remove(cameraBounds[i]);
+                i--;
+                continue;
+            }
             switch (cameraBounds[i].direction)
             {
                 case Room.Direction.Up:

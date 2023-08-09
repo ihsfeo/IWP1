@@ -438,4 +438,35 @@ public class InventoryManager : MonoBehaviour
     {
         
     }
+
+    public void UseItem(int Slot)
+    {
+        if (!Inventory[Slot]) return;
+        else if (Inventory[Slot].ItemType != ItemBase.TypeOfItems.Consumable) return;
+
+        switch(Inventory[Slot].itemID)
+        {
+            case ItemBase.ItemID.Apple:
+                {
+                    int MaxH = (int)player.status.GetStat(CStats.Stats.MaxHealth);
+                    if (MaxH > player.status.Health)
+                    {
+                        if (MaxH - player.status.Health <= 5) player.status.Health = MaxH;
+                        else player.status.Health += 5;
+                        Inventory[Slot].Count--;
+                    }
+                    break;
+                }
+            default: break;
+        }
+
+
+
+
+
+        if (Inventory[Slot].Count == 0)
+        {
+            Destroy(Inventory[Slot].gameObject);
+        }
+    }
 }

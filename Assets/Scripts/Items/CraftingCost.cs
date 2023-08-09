@@ -21,6 +21,10 @@ public class CraftingCost : MonoBehaviour
                 CM.AmountList.Add(5);
                 CM.MaterialList.Add(ItemBase.ItemID.WeaponFragment1);
                 break;
+            case ItemBase.ItemID.Apple:
+                CM.AmountList.Add(1);
+                CM.MaterialList.Add(ItemBase.ItemID.WeaponFragment1);
+                break;
             default:
                 CM.AmountList.Add(5);
                 CM.MaterialList.Add(ItemBase.ItemID.WeaponFragment1);

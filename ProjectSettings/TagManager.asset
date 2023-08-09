@@ -15,6 +15,7 @@ TagManager:
   - iEquip
   - DetectionRange
   - NPC
+  - ItemManager
   layers:
   - Default
   - TransparentFX

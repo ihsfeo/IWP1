@@ -15,6 +15,7 @@ public class ClickAndDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
     public Canvas canvas;
     private RectTransform dragRectTransform;
     private string SlotName;
+    float TimeFromClick = 1;
 
     private void Awake()
     {
@@ -26,12 +27,17 @@ public class ClickAndDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
         if ((tag == "iSlot" && inventoryManager.Inventory[Slot]) ||
             (tag == "iEquip" && inventoryManager.EquippedItems[Slot]))
         {
-                OGPosition = gameObject.transform.position;
-                Clone = Instantiate(this.gameObject, transform.parent);
-                Clone.name = this.name;
-                Clone.GetComponent<ClickAndDrag>().enabled = false;
-                Clone.GetComponent<HoverDescription>().enabled = false;
-                Clone.GetComponent<BoxCollider2D>().enabled = false;
+            if (TimeFromClick <= 0.1f)
+            {
+                inventoryManager.UseItem(Slot);
+            }
+            TimeFromClick = 0;
+            OGPosition = gameObject.transform.position;
+            Clone = Instantiate(this.gameObject, transform.parent);
+            Clone.name = this.name;
+            Clone.GetComponent<ClickAndDrag>().enabled = false;
+            Clone.GetComponent<HoverDescription>().enabled = false;
+            Clone.GetComponent<BoxCollider2D>().enabled = false;
         }
     }
 
@@ -40,6 +46,7 @@ public class ClickAndDrag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEnd
         if ((tag == "iSlot" && inventoryManager.Inventory[Slot]) || 
             (tag == "iEquip" && inventoryManager.EquippedItems[Slot]))
         {
+            TimeFromClick += Time.deltaTime;
             dragRectTransform.anchoredPosition += eventData.delta / canvas.scaleFactor;
             CheckForAvailableSlot();
         }
