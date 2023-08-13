@@ -24,6 +24,10 @@ public class PlayerInfo : MonoBehaviour
     [SerializeField] AudioSource BossBGM;
     [SerializeField] AudioSource HurtAudio;
     [SerializeField] AudioSource DeathAudio;
+    [SerializeField] GameObject StatusBase;
+    [SerializeField] GameObject DeathScreen;
+
+    float DeathTime = 0;
 
     List<ItemBase> WeaponList = new List<ItemBase>();
     public List<GameObject> NPC = new List<GameObject>();
@@ -266,43 +270,43 @@ public class PlayerInfo : MonoBehaviour
             return;
         }
 
-        StatusAilment statusAilment;
+        GameObject statusAilment = Instantiate(StatusBase);
         switch (Element)
         {
             case ItemBase.TypeOfDamage.Physical:
-                statusAilment = new PhysicalAilment();
-                statusAilment.TypeOfAilment = ItemBase.TypeOfDamage.Physical;
-                statusAilment.Adv = 5;
-                statusAilment.AdvNeeded = statusAilment.GetAdvNeeded(1);
-                status.StatusAilmentsList.Add(statusAilment);
+                statusAilment.AddComponent<PhysicalAilment>();
+                statusAilment.GetComponent<PhysicalAilment>().TypeOfAilment = ItemBase.TypeOfDamage.Physical;
+                statusAilment.GetComponent<PhysicalAilment>().Adv = 5;
+                statusAilment.GetComponent<PhysicalAilment>().AdvNeeded = statusAilment.GetComponent<PhysicalAilment>().GetAdvNeeded(1);
+                status.StatusAilmentsList.Add(statusAilment.GetComponent<PhysicalAilment>());
                 break;
             case ItemBase.TypeOfDamage.Fire:
-                statusAilment = new FireAilment();
-                statusAilment.TypeOfAilment = ItemBase.TypeOfDamage.Fire;
-                statusAilment.Adv = 5;
-                statusAilment.AdvNeeded = statusAilment.GetAdvNeeded(1);
-                status.StatusAilmentsList.Add(statusAilment);
+                statusAilment.AddComponent<FireAilment>();
+                statusAilment.GetComponent<FireAilment>().TypeOfAilment = ItemBase.TypeOfDamage.Fire;
+                statusAilment.GetComponent<FireAilment>().Adv = 5;
+                statusAilment.GetComponent<FireAilment>().AdvNeeded = statusAilment.GetComponent<FireAilment>().GetAdvNeeded(1);
+                status.StatusAilmentsList.Add(statusAilment.GetComponent<FireAilment>());
                 break;
             case ItemBase.TypeOfDamage.Ice:
-                statusAilment = new IceAilment();
-                statusAilment.TypeOfAilment = ItemBase.TypeOfDamage.Ice;
-                statusAilment.Adv = 5;
-                statusAilment.AdvNeeded = statusAilment.GetAdvNeeded(1);
-                status.StatusAilmentsList.Add(statusAilment);
+                statusAilment.AddComponent<IceAilment>();
+                statusAilment.GetComponent<IceAilment>().TypeOfAilment = ItemBase.TypeOfDamage.Ice;
+                statusAilment.GetComponent<IceAilment>().Adv = 5;
+                statusAilment.GetComponent<IceAilment>().AdvNeeded = statusAilment.GetComponent<IceAilment>().GetAdvNeeded(1);
+                status.StatusAilmentsList.Add(statusAilment.GetComponent<IceAilment>());
                 break;
             case ItemBase.TypeOfDamage.Natural:
-                statusAilment = new NaturalAilment();
-                statusAilment.TypeOfAilment = ItemBase.TypeOfDamage.Natural;
-                statusAilment.Adv = 5;
-                statusAilment.AdvNeeded = statusAilment.GetAdvNeeded(1);
-                status.StatusAilmentsList.Add(statusAilment);
+                statusAilment.AddComponent<NaturalAilment>();
+                statusAilment.GetComponent<NaturalAilment>().TypeOfAilment = ItemBase.TypeOfDamage.Natural;
+                statusAilment.GetComponent<NaturalAilment>().Adv = 5;
+                statusAilment.GetComponent<NaturalAilment>().AdvNeeded = statusAilment.GetComponent<NaturalAilment>().GetAdvNeeded(1);
+                status.StatusAilmentsList.Add(statusAilment.GetComponent<NaturalAilment>());
                 break;
             case ItemBase.TypeOfDamage.Lightning:
-                statusAilment = new LightningAilment();
-                statusAilment.TypeOfAilment = ItemBase.TypeOfDamage.Lightning;
-                statusAilment.Adv = 5;
-                statusAilment.AdvNeeded = statusAilment.GetAdvNeeded(1);
-                status.StatusAilmentsList.Add(statusAilment);
+                statusAilment.AddComponent<LightningAilment>();
+                statusAilment.GetComponent<LightningAilment>().TypeOfAilment = ItemBase.TypeOfDamage.Lightning;
+                statusAilment.GetComponent<LightningAilment>().Adv = 5;
+                statusAilment.GetComponent<LightningAilment>().AdvNeeded = statusAilment.GetComponent<LightningAilment>().GetAdvNeeded(1);
+                status.StatusAilmentsList.Add(statusAilment.GetComponent<LightningAilment>());
                 break;
             default:
                 break;
@@ -357,16 +361,28 @@ public class PlayerInfo : MonoBehaviour
         // Death
         if (status.Health == 0)
         {
+            statusAilmentManager.transform.parent.GetChild(1).GetComponent<MapManager>().Reset();
+            statusAilmentManager.transform.parent.GetChild(1).GetComponent<MapManager>().BaseArea.gameObject.SetActive(true);
             DeathAudio.Play();
+            DeathScreen.SetActive(true);
+            DeathTime = 1;
             status.Health = (int)status.GetStat(CStats.Stats.MaxHealth);
            // statusAilmentManager.
             transform.position = new Vector3(-10, -45.5f, 0);
-            Destroy(statusAilmentManager.transform.parent.GetChild(4).gameObject);
             for (int i = 0; i < status.StatusAilmentsList.Count; i++)
             {
                 statusAilmentManager.RemoveGauge(status.StatusAilmentsList[i]); // Remove UI
                 status.StatusAilmentsList.Remove(status.StatusAilmentsList[i]); // Remove
                 i--;
+            }
+        }
+
+        if (DeathTime > 0)
+        {
+            DeathTime -= Time.deltaTime;
+            if (DeathTime <= 0)
+            {
+                DeathScreen.SetActive(false);
             }
         }
 
